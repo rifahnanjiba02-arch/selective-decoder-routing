@@ -1,0 +1,8 @@
+Planned notebook: colab_workflow.ipynb
+
+This will be the main Google Colab entry point for the project. It should guide
+the reader through setup, dataset inspection, oracle analysis, feature
+preparation, model training, evaluation, and figures. Research logic belongs in
+src/router/; the notebook should call that logic and display the results.
+
+The notebook has not been created yet.
