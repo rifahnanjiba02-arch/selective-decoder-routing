@@ -35,7 +35,7 @@ The rescue opportunity is `PM wrong AND CM correct`. The **oracle LER** is the f
 
 ## Planned notebooks (you create these)
 
-There are **no `.ipynb` files in the repository yet**. Create these six notebooks in `notebooks/` when ready. Each should have a title, purpose, short Colab setup section, and placeholders that call reusable code from `src/router/`:
+There are **no `.ipynb` files in the repository yet**. Create these six notebooks in `notebooks/` when ready. Each should have a title, purpose, short Colab setup section, and placeholders that call reusable code from `router/`:
 
 | Notebook | Responsibility |
 | --- | --- |
@@ -54,7 +54,7 @@ cd selective-decoder-routing
 pip install -e .
 ```
 
-Install optional QML dependencies only when working on the VQC notebook: `pip install -e '.[qml]'`. Keep notebook code focused on exploration and presentation; add reusable logic to `src/router/`.
+Install optional QML dependencies only when working on the VQC notebook: `pip install -e '.[qml]'`. Keep notebook code focused on exploration and presentation; add reusable logic to `router/`.
 
 ## Repository layout
 
@@ -76,7 +76,7 @@ selective-decoder-routing/
 │   ├── 03_qml_router.ipynb               (planned)
 │   ├── 04_routing_tradeoff.ipynb         (planned)
 │   └── 05_final_evaluation.ipynb         (planned)
-├── src/router/
+├── router/
 │   ├── __init__.py
 │   ├── data.py                # dataset and development sampling
 │   ├── decoders.py            # decoder outcome accounting
