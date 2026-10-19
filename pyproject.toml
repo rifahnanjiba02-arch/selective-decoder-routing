@@ -26,5 +26,5 @@ dependencies = [
 qml = ["pennylane"]
 
 [tool.setuptools.packages.find]
-where = ["."]
+where = ["src"]
 include = ["router*"]

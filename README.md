@@ -35,7 +35,7 @@ The rescue opportunity is `PM wrong AND CM correct`. The **oracle LER** is the f
 
 ## Planned notebooks (you create these)
 
-There are **no `.ipynb` files in the repository yet**. Create these six notebooks in `notebooks/` when ready. Each should have a title, purpose, short Colab setup section, and placeholders that call reusable code from `router/`:
+There are **no `.ipynb` files in the repository yet**. Create these six notebooks in `notebooks/` when ready. Each should have a title, purpose, short Colab setup section, and placeholders that call reusable code from the `router` package inside `src/` (for example, `from router.decoders import summarize_outcomes`):
 
 | Notebook | Responsibility |
 | --- | --- |
@@ -54,7 +54,7 @@ cd selective-decoder-routing
 pip install -e .
 ```
 
-Install optional QML dependencies only when working on the VQC notebook: `pip install -e '.[qml]'`. Keep notebook code focused on exploration and presentation; add reusable logic to `router/`.
+Install optional QML dependencies only when working on the VQC notebook: `pip install -e '.[qml]'`. Keep notebook code focused on exploration and presentation; add reusable logic to the `router` package inside `src/`.
 
 ## Repository layout
 
@@ -76,28 +76,43 @@ selective-decoder-routing/
 │   ├── 03_qml_router.ipynb               (planned)
 │   ├── 04_routing_tradeoff.ipynb         (planned)
 │   └── 05_final_evaluation.ipynb         (planned)
-├── router/
-│   ├── __init__.py
-│   ├── data.py                # dataset and development sampling
-│   ├── decoders.py            # decoder outcome accounting
-│   ├── labels.py              # positive routing target
-│   ├── features.py            # leakage-safe feature planning
-│   ├── routing.py             # future threshold and selection logic
-│   ├── evaluate.py            # future system metrics
-│   ├── plots.py               # future shared plots
-│   └── models/
+├── src/
+│   └── router/
 │       ├── __init__.py
-│       ├── classical.py
-│       └── qml.py
-├── results/                   # planned: feasibility/, figures/, tables/, model_scores/
-├── artifacts/                 # local only: features/, models/; Git-ignored
-├── app/streamlit_app.py       # reserved; dashboard not implemented
+│       ├── data.py            # dataset and development sampling
+│       ├── decoders.py        # decoder outcome accounting
+│       ├── labels.py          # positive routing target
+│       ├── features.py        # leakage-safe feature planning
+│       ├── routing.py         # threshold and decoder selection
+│       ├── evaluate.py        # future system metrics
+│       ├── plots.py           # future shared plots
+│       └── models/
+│           ├── __init__.py
+│           ├── classical.py
+│           └── qml.py
+├── results/
+│   ├── README.md
+│   ├── feasibility/
+│   ├── figures/
+│   ├── tables/
+│   └── model_scores/
+├── artifacts/                 # local only; Git-ignored
+│   ├── features/             (planned)
+│   └── models/               (planned)
+├── app/
+│   └── streamlit_app.py      # reserved; dashboard not implemented
 ├── docs/
 │   ├── PROJECT_GUIDE.md
 │   ├── DATA_DICTIONARY.md
 │   └── EXPERIMENT_PROTOCOL.md
-├── paper/                     # planned writing and figures
-└── tests/                     # tests added as research code is implemented
+├── paper/
+│   └── README.md
+└── tests/
+    ├── test_data.py          (planned)
+    ├── test_features.py      (planned)
+    └── test_routing.py
 ```
+
+Entries marked `(planned)` are listed for the intended workflow and have not been created. Local artifacts are ignored by Git.
 
 The Python package, configuration templates, and protocol are the starting point for a 15-day implementation schedule. Begin with feasibility, then feature engineering and candidate routers, then validation threshold selection, and finally one test-set evaluation. See [the project guide](docs/PROJECT_GUIDE.md), [data dictionary](docs/DATA_DICTIONARY.md), and [experiment protocol](docs/EXPERIMENT_PROTOCOL.md).

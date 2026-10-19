@@ -7,4 +7,4 @@ install-qml:
 	python -m pip install -e '.[qml]'
 
 test:
-	python -m unittest discover -s tests
+	PYTHONPATH=src python -m unittest discover -s tests
