@@ -1,5 +1,0 @@
-Planned files: small metrics tables, run summaries, and split manifests from
-completed experiments. Large datasets, feature caches, and fitted models
-should be stored outside Git.
-
-No experiment results have been generated yet.

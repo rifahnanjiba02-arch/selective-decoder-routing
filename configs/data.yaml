@@ -1,0 +1,11 @@
+dataset_name: Bauxitiego/surface-code-syndromes
+random_seed: 20260806  # Dataset split seed; choose and record a separate sampling seed if needed.
+development:
+  train_size: null       # TODO: choose a manageable subset size.
+  validation_size: null  # TODO: choose a manageable subset size.
+  test_size: null        # TODO: final-evaluation subset policy; keep test untouched until then.
+paths:
+  cache_dir: .cache/huggingface
+  feature_dir: artifacts/features
+  model_dir: artifacts/models
+  result_dir: results

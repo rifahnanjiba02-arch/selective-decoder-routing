@@ -1,0 +1,2 @@
+# The canonical dependency list and optional groups live in pyproject.toml.
+-e .

@@ -1,0 +1,29 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "selective-decoder-routing"
+version = "0.1.0"
+description = "Research scaffolding for selective surface-code decoder routing"
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = [
+    "datasets",
+    "pandas",
+    "numpy",
+    "pyarrow",
+    "scikit-learn",
+    "matplotlib",
+    "xgboost",
+    "joblib",
+    "PyYAML",
+    "jupyter",
+    "streamlit",
+]
+
+[project.optional-dependencies]
+qml = ["pennylane"]
+
+[tool.setuptools.packages.find]
+where = ["src"]

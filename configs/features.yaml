@@ -1,0 +1,12 @@
+# Candidate inputs only. Never include label, pymatching, correlated_matching,
+# decoder correctness, or the routing target as model features.
+compact_features:
+  - detection_event_count
+  - event_density
+  - activity_across_rounds
+  - active_rounds
+  - maximum_round_activity
+  - distance
+  - rounds
+  - basis
+padding_mask: round_widths  # Exclude padded syndrome slots from all counts and densities.

@@ -1,0 +1,9 @@
+# Candidate routers for the same rescue target. Tune settings on validation only.
+logistic_regression:
+  enabled: true
+random_forest:
+  enabled: true
+xgboost:
+  enabled: true
+vqc:
+  enabled: false  # Optional QML dependencies; compact features first.

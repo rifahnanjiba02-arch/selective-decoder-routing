@@ -1,0 +1,16 @@
+__pycache__/
+.ipynb_checkpoints/
+.cache/
+data/
+artifacts/
+*.parquet
+*.joblib
+*.pkl
+*.npy
+*.npz
+.env
+.venv/
+*.egg-info/
+.pytest_cache/
+# If a tiny shareable sample is approved later, document an explicit exception
+# for data/samples/ rather than committing the complete dataset or caches.

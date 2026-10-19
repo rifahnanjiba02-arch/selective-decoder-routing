@@ -1,4 +1,0 @@
-Planned files: tests for routing labels, experiment-group split leakage,
-feature extraction, and logical error rate calculations.
-
-No tests have been written yet.
