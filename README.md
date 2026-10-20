@@ -115,4 +115,4 @@ selective-decoder-routing/
 
 Entries marked `(planned)` are listed for the intended workflow and have not been created. Local artifacts are ignored by Git.
 
-The Python package, configuration templates, and protocol are the starting point for a 15-day implementation schedule. Begin with feasibility, then feature engineering and candidate routers, then validation threshold selection, and finally one test-set evaluation. See [the project guide](docs/PROJECT_GUIDE.md), [data dictionary](docs/DATA_DICTIONARY.md), and [experiment protocol](docs/EXPERIMENT_PROTOCOL.md).
+The Python package, configuration templates, and protocol are the starting point for a 15-day implementation schedule. Begin with feasibility, then feature engineering and candidate routers, then validation threshold selection, and finally one test-set evaluation. See the [Day 1 member work guide](docs/DAY_1_MEMBER_WORK_GUIDE.md), [project guide](docs/PROJECT_GUIDE.md), [data dictionary](docs/DATA_DICTIONARY.md), and [experiment protocol](docs/EXPERIMENT_PROTOCOL.md).
