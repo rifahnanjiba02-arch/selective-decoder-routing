@@ -1,6 +1,6 @@
 # Week 1 member work guide for the original Day 1 task
 
-This guide turns the “Day 1” assignment in `cse491_project.md` into concrete work and handoffs **to finish within one week**. See the separate [seven-day schedule](WEEK_1_SCHEDULE.md) for daily milestones and the end-of-Day-7 deadline. **You are Member 4: your role is to bring the other three members' work together in a Colab notebook.** This is a feasibility check, not model training.
+This guide turns the “Day 1” assignment in `cse491_project.md` into concrete work and handoffs **to finish within one week**. See the separate [seven-day schedule](WEEK_1_SCHEDULE.md) for daily milestones and the end-of-Day-7 deadline. **Member 4 brings the other three members' work together in a Colab notebook.** This is a feasibility check, not model training.
 
 ## Goal and shared rules
 
@@ -21,7 +21,7 @@ The team's references are [the project guide](PROJECT_GUIDE.md), [data dictionar
 | **1 — Dataset** | `src/router/data.py`, `configs/data.yaml` | Working loader and deterministic sampler; actual split sizes, columns, value checks, and any data problems. |
 | **2 — Decoder outcomes** | `src/router/decoders.py` | Four per-shot masks and a summary of counts and rates from the sampled rows. |
 | **3 — Target and checks** | `src/router/labels.py`, tests | Verified rescue target and hand-checked tests for every outcome and metric. |
-| **4 — Colab integration (you)** | `notebooks/00_dataset_and_feasibility.ipynb` | A runnable, clearly explained Day 1 notebook and a short findings record in `results/feasibility/`. |
+| **4 — Colab integration** | `notebooks/00_dataset_and_feasibility.ipynb` | A runnable, clearly explained Day 1 notebook and a short findings record in `results/feasibility/`. |
 
 Members 2 and 3 can work with small manual arrays while Member 1 sets up the loader. Member 4 can build the notebook structure immediately, then run its data and metric cells after the interfaces are ready.
 
@@ -81,9 +81,9 @@ Members 2 and 3 can work with small manual arrays while Member 1 sets up the loa
 
 ## Member 4 — Build the Day 1 Colab notebook
 
-Create `notebooks/00_dataset_and_feasibility.ipynb`. Your job is to make the work reproducible and understandable; import the other members' functions instead of copying their logic into notebook cells.
+Member 4 creates `notebooks/00_dataset_and_feasibility.ipynb` and makes the work reproducible and understandable. The notebook imports the other members' functions instead of copying their logic into cells.
 
-1. **Add the notebook introduction.** State the question, dataset source, Day 1 scope, and that you compare stored decoder predictions. Link the repository guides.
+1. **Add the notebook introduction.** State the question, dataset source, Day 1 scope, and that the notebook compares stored decoder predictions. Link the repository guides.
 2. **Add Colab setup.** In a fresh Colab runtime, clone the repository, enter its directory, and install the package. For example:
 
    ```python
@@ -92,7 +92,7 @@ Create `notebooks/00_dataset_and_feasibility.ipynb`. Your job is to make the wor
    %pip install -e .
    ```
 
-   If you opened the notebook from an already cloned checkout, skip the clone cell and run the install from the repository root. Re-run `%pip install -e .` after pulling teammates' changes if the runtime needs to pick them up.
+   When the notebook opens from an already cloned checkout, Member 4 skips the clone cell and runs the install from the repository root. After pulling teammates' changes, Member 4 re-runs `%pip install -e .` if the runtime needs to pick them up.
 3. **Record run settings.** Display the dataset name/revision if known, split, sample size, sampling seed, and package commit or version. Import `load_surface_code_dataset` and `sample_split` using the interface Member 1 provides. Use the **train** sample only for Day 1 calculations.
 4. **Inspect the data.** Show the published split names and sizes, column list, a few compact example rows, relevant value sets and missing counts. Summarize long `syndrome` arrays by length rather than dumping them. Note any unresolved schema interpretation.
 5. **Compute and explain outcomes.** Convert the sampled `label`, `pymatching`, and `correlated_matching` columns to aligned arrays. Call `outcome_masks()`, `summarize_outcomes()`, and `route_to_correlated()`. Show a table with the four outcome counts and a second table with the five rates. Explain in plain words why `y_router = 1` only for rescue, why all other rows get `0`, and why oracle LER is `both_wrong / N`.
@@ -128,5 +128,5 @@ Create `notebooks/00_dataset_and_feasibility.ipynb`. Your job is to make the wor
 - [ ] Member 1: loader and reproducible train sampler work; schema, split sizes, and missing/odd values are recorded.
 - [ ] Member 2: outcome groups sum to `N`; all requested counts and rates are reported.
 - [ ] Member 3: rescue target and metrics pass hand-checked tests; `make test` passes.
-- [ ] Member 4 (you): your notebook runs top to bottom, explains results, records settings, and includes a compact findings note without shot-level data.
+- [ ] Member 4: the notebook runs top to bottom, explains results, records settings, and includes a compact findings note without shot-level data.
 - [ ] Everyone: no test rows informed Day 1 decisions, and no label or decoder prediction is used as a router input feature.
