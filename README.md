@@ -33,7 +33,7 @@ Start by checking the dataset schema and split definitions on a small developmen
 
 The rescue opportunity is `PM wrong AND CM correct`. The **oracle LER** is the fraction `PM wrong AND CM wrong`: even a perfect selector of these two predictions fails there. PyMatching LER and correlated-matching LER are each the fraction of shots their respective decoder gets wrong. Use decoder predictions and the true label only for targets and evaluation, never as router input features.
 
-## Planned notebooks (you create these)
+## Planned notebooks
 
 There are **no `.ipynb` files in the repository yet**. Create these six notebooks in `notebooks/` when ready. Each should have a title, purpose, short Colab setup section, and placeholders that call reusable code from the `router` package inside `src/` (for example, `from router.decoders import summarize_outcomes`):
 
@@ -115,4 +115,4 @@ selective-decoder-routing/
 
 Entries marked `(planned)` are listed for the intended workflow and have not been created. Local artifacts are ignored by Git.
 
-The Python package, configuration templates, and protocol are the starting point for the project. The original Day 1 feasibility assignment is planned as a one-week task; see the [seven-day schedule](docs/WEEK_1_SCHEDULE.md) and [member work guide](docs/DAY_1_MEMBER_WORK_GUIDE.md). Later work covers feature engineering and candidate routers, validation threshold selection, and one final test-set evaluation. See also the [project guide](docs/PROJECT_GUIDE.md), [data dictionary](docs/DATA_DICTIONARY.md), and [experiment protocol](docs/EXPERIMENT_PROTOCOL.md).
+The Python package, configuration templates, and protocol are the starting point for the project. The original Day 1 feasibility assignment is planned as a one-week task; see the [seven-day schedule](docs/WEEK_1_SCHEDULE.md) and [task guide](docs/WEEK_1_TASK_GUIDE.md). Later work covers feature engineering and candidate routers, validation threshold selection, and one final test-set evaluation. See also the [project guide](docs/PROJECT_GUIDE.md), [data dictionary](docs/DATA_DICTIONARY.md), and [experiment protocol](docs/EXPERIMENT_PROTOCOL.md).
