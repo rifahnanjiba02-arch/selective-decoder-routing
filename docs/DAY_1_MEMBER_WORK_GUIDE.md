@@ -1,18 +1,18 @@
-# Day 1 member work guide
+# Week 1 member work guide for the original Day 1 task
 
-This guide turns the Day 1 assignment in `cse491_project.md` into concrete work and handoffs. **Member 4 owns the Colab notebook that brings the other three members' work together.** Day 1 is a feasibility check, not model training.
+This guide turns the “Day 1” assignment in `cse491_project.md` into concrete work and handoffs **to finish within one week**. See the separate [seven-day schedule](WEEK_1_SCHEDULE.md) for daily milestones and the end-of-Day-7 deadline. **You are Member 4: your role is to bring the other three members' work together in a Colab notebook.** This is a feasibility check, not model training.
 
 ## Goal and shared rules
 
-For a small, reproducible sample of the **training** split, inspect the dataset and answer: how often does each stored decoder fail, when could correlated matching rescue PyMatching, and what is the best possible error rate if we could always pick the correct decoder?
+The team's goal is to inspect a small, reproducible sample of the **training** split and answer: how often does each stored decoder fail, when could correlated matching rescue PyMatching, and what is the best possible error rate if a selector could always pick the correct decoder?
 
-- Work from the published train/validation/test splits. Sample about **50,000–100,000 training rows** for Day 1; record the sample size and seed. Read split metadata to confirm sizes, but keep test rows untouched.
-- Use `label`, `pymatching`, and `correlated_matching` only for outcome labels and evaluation. Never use them as router input features.
-- Confirm that the three fields have the expected binary values and check missing values before calculating rates.
-- Put reusable calculations in `src/router/`; use the notebook to run and explain them. Do not commit the full dataset, Hugging Face cache, or large generated files.
-- Record what was actually checked. If a field, split size, or decoder meaning is uncertain, mark it as unverified instead of guessing.
+- The team works from the published train/validation/test splits. The Day 1 sample is about **50,000–100,000 training rows**, with its size and seed recorded. Split metadata can confirm sizes; test rows stay untouched.
+- `label`, `pymatching`, and `correlated_matching` are used only for outcome labels and evaluation, never as router input features.
+- The team confirms that those three fields have the expected binary values and checks missing values before calculating rates.
+- Reusable calculations belong in `src/router/`; the notebook runs and explains them. The full dataset, Hugging Face cache, and large generated files do not belong in Git.
+- Findings distinguish confirmed checks from open questions about fields, split sizes, or decoder meanings.
 
-Start with [the project guide](PROJECT_GUIDE.md), [data dictionary](DATA_DICTIONARY.md), and [experiment protocol](EXPERIMENT_PROTOCOL.md). The repository already has starter implementations in `src/router/decoders.py` and `src/router/labels.py`, plus a small test in `tests/test_routing.py`; inspect and verify those before changing them.
+The team's references are [the project guide](PROJECT_GUIDE.md), [data dictionary](DATA_DICTIONARY.md), and [experiment protocol](EXPERIMENT_PROTOCOL.md). The repository already has starter implementations in `src/router/decoders.py` and `src/router/labels.py`, plus a small test in `tests/test_routing.py`; Members 2 and 3 verify those before changing them.
 
 ## Work order and handoffs
 
@@ -27,18 +27,18 @@ Members 2 and 3 can work with small manual arrays while Member 1 sets up the loa
 
 ## Member 1 — Load and inspect the data
 
-1. Check the dataset card and use Hugging Face `load_dataset` to identify the published split names and sizes. Avoid loading all rows into a Pandas DataFrame just to inspect them.
-2. Implement `load_surface_code_dataset()` so the dataset can be loaded by split. Implement `sample_split()` so the same split, sample size, and seed produce the same rows in the same order. Agree on and document the return types and arguments so Member 4 can call them directly.
-3. Set a Day 1 train sample size and sampling seed in `configs/data.yaml`. Keep cache files in the configured ignored cache directory. Do not select a test sample for development.
-4. On the training sample, report column names, sample row shapes/types, missing values, and observed values for `label`, `pymatching`, `correlated_matching`, `basis`, `distance`, and `rounds`. Also inspect `syndrome`, `round_widths`, `time_steps`, and `width` enough to catch inconsistent shapes. Avoid printing full syndrome arrays for many rows.
-5. Add confirmed field interpretations or unresolved questions to `docs/DATA_DICTIONARY.md`, and send Member 4 the exact loading and sampling calls plus the sample seed and size.
+1. Member 1 checks the dataset card and uses Hugging Face `load_dataset` to identify the published split names and sizes, without loading all rows into a Pandas DataFrame just to inspect them.
+2. Member 1 implements `load_surface_code_dataset()` for loading by split and `sample_split()` so the same split, sample size, and seed produce the same rows in the same order. They document return types and arguments for Member 4.
+3. Member 1 sets a Day 1 train sample size and sampling seed in `configs/data.yaml`, keeps cache files in the configured ignored directory, and leaves test rows untouched.
+4. On the training sample, Member 1 reports column names, row shapes/types, missing values, and observed values for `label`, `pymatching`, `correlated_matching`, `basis`, `distance`, and `rounds`. They inspect `syndrome`, `round_widths`, `time_steps`, and `width` enough to catch inconsistent shapes, without printing many full syndrome arrays.
+5. Member 1 adds confirmed field interpretations or unresolved questions to `docs/DATA_DICTIONARY.md` and sends Member 4 the exact loading and sampling calls plus the sample seed and size.
 
 **Done when:** Member 4 can run the loader and sampler in a fresh Colab session and reproduce the same training rows, and the schema/split summary is written down.
 
 ## Member 2 — Count decoder outcomes
 
-1. Check the existing `outcome_masks(label, pymatching, correlated_matching)` and `summarize_outcomes(...)` in `src/router/decoders.py`. Verify equal-length, one-dimensional input and the dataset's actual value encoding before using the results.
-2. For each shot, compare both stored predictions with the true `label` and assign exactly one group:
+1. Member 2 checks the existing `outcome_masks(label, pymatching, correlated_matching)` and `summarize_outcomes(...)` in `src/router/decoders.py`. They verify equal-length, one-dimensional input and the dataset's actual value encoding before using the results.
+2. For each shot, Member 2 compares both stored predictions with the true `label` and assigns exactly one group:
 
    | Group | Condition | Meaning |
    | --- | --- | --- |
@@ -47,7 +47,7 @@ Members 2 and 3 can work with small manual arrays while Member 1 sets up the loa
    | `harmful_switch` | PM correct, CM wrong | Switching hurts. |
    | `both_wrong` | PM wrong, CM wrong | Neither stored prediction helps. |
 
-3. Report the four **counts** and confirm that they sum to the sample size. With `N` shots, calculate:
+3. Member 2 reports the four **counts** and confirms that they sum to the sample size. With `N` shots, the rates are:
 
    ```text
    pymatching_ler         = (rescue + both_wrong) / N
@@ -57,16 +57,25 @@ Members 2 and 3 can work with small manual arrays while Member 1 sets up the loa
    oracle_ler             = both_wrong / N
    ```
 
-4. Give Member 3 the function behavior and a sample result to check; give Member 4 the summary output. Name the denominator and separate counts from rates in any table.
+4. Member 2 gives Member 3 the function behavior and a sample result to check, and gives Member 4 the summary output. Their tables name the denominator and separate counts from rates.
 
 **Done when:** all nine requested outputs are available, the groups are exhaustive and exclusive, and `rescue_opportunity` is clearly different from `oracle_ler`.
 
 ## Member 3 — Verify the routing target and metrics
 
-1. Check the existing `route_to_correlated(...)` in `src/router/labels.py`. It must return true/1 **only** when PM is wrong **and** CM is correct. Prediction disagreement alone is not the target.
-2. Create or extend a tiny manual test set containing all four outcome groups. State the expected group for each row before running code.
-3. Assert the target is positive only on rescue rows. Assert the four masks do not overlap, cover every row, and produce the expected counts and all summary rates. Include a case where switching harms and a case where both decoders are wrong.
-4. Run `make test` from the repository root and share the result with Members 2 and 4. If the dataset uses unexpected values, coordinate validation changes with Members 1 and 2 before treating metrics as trustworthy.
+1. Member 3 checks the existing `route_to_correlated(...)` in `src/router/labels.py`. This function **creates the routing target from the true `label` and both stored decoder predictions**. It already exists in the repository, so the task is to verify it and fix it if the checks fail.
+
+   | Decoder outcome | Routing target `y_router` |
+   | --- | ---: |
+   | PM wrong + CM correct (`rescue`) | **1** |
+   | PM correct + CM correct | 0 |
+   | PM correct + CM wrong | 0 |
+   | PM wrong + CM wrong | 0 |
+
+   In other words, `y_router = 1` only for rescue; **everything else is `0`**. The function currently returns a Boolean array (`True`/`False`), which represents the same binary target (`1`/`0`). `y_router` is a new derived target, **not** the dataset's true logical `label`. Prediction disagreement alone is not the target.
+2. Member 3 creates or extends a tiny manual test set containing all four outcome groups and states the expected group for each row before running code.
+3. Their tests assert that the target is positive only on rescue rows, the four masks do not overlap, every row is covered, and all counts and summary rates match the manual expectations. The cases include a harmful switch and both decoders being wrong.
+4. Member 3 runs `make test` from the repository root and shares the result with Members 2 and 4. If the dataset uses unexpected values, they coordinate validation changes with Members 1 and 2 before treating metrics as trustworthy.
 
 **Done when:** the manual expected values match the functions, including the distinction between rescue opportunity and oracle LER.
 
@@ -74,7 +83,7 @@ Members 2 and 3 can work with small manual arrays while Member 1 sets up the loa
 
 Create `notebooks/00_dataset_and_feasibility.ipynb`. Your job is to make the work reproducible and understandable; import the other members' functions instead of copying their logic into notebook cells.
 
-1. **Add the notebook introduction.** State the question, dataset source, Day 1 scope, and that stored decoder predictions are being compared, not recomputed. Link the repository guides.
+1. **Add the notebook introduction.** State the question, dataset source, Day 1 scope, and that you compare stored decoder predictions. Link the repository guides.
 2. **Add Colab setup.** In a fresh Colab runtime, clone the repository, enter its directory, and install the package. For example:
 
    ```python
@@ -84,9 +93,9 @@ Create `notebooks/00_dataset_and_feasibility.ipynb`. Your job is to make the wor
    ```
 
    If you opened the notebook from an already cloned checkout, skip the clone cell and run the install from the repository root. Re-run `%pip install -e .` after pulling teammates' changes if the runtime needs to pick them up.
-3. **Record run settings.** Display the dataset name/revision if known, split, sample size, sampling seed, and package commit or version. Import `load_surface_code_dataset` and `sample_split` using the agreed Member 1 interface. Use the **train** sample only for Day 1 calculations.
+3. **Record run settings.** Display the dataset name/revision if known, split, sample size, sampling seed, and package commit or version. Import `load_surface_code_dataset` and `sample_split` using the interface Member 1 provides. Use the **train** sample only for Day 1 calculations.
 4. **Inspect the data.** Show the published split names and sizes, column list, a few compact example rows, relevant value sets and missing counts. Summarize long `syndrome` arrays by length rather than dumping them. Note any unresolved schema interpretation.
-5. **Compute and explain outcomes.** Convert the sampled `label`, `pymatching`, and `correlated_matching` columns to aligned arrays. Call `outcome_masks()`, `summarize_outcomes()`, and `route_to_correlated()`. Show a table with the four outcome counts and a second table with the five rates. Explain in plain words why rescue is the positive target and why oracle LER is `both_wrong / N`.
+5. **Compute and explain outcomes.** Convert the sampled `label`, `pymatching`, and `correlated_matching` columns to aligned arrays. Call `outcome_masks()`, `summarize_outcomes()`, and `route_to_correlated()`. Show a table with the four outcome counts and a second table with the five rates. Explain in plain words why `y_router = 1` only for rescue, why all other rows get `0`, and why oracle LER is `both_wrong / N`.
 
    Once Member 1's sampler returns a column-indexable sample, the core calculation can look like this:
 
@@ -95,15 +104,15 @@ Create `notebooks/00_dataset_and_feasibility.ipynb`. Your job is to make the wor
    from router.decoders import outcome_masks, summarize_outcomes
    from router.labels import route_to_correlated
 
-   y = np.asarray(sample["label"])
+   true_label = np.asarray(sample["label"])
    pm = np.asarray(sample["pymatching"])
    cm = np.asarray(sample["correlated_matching"])
-   masks = outcome_masks(y, pm, cm)
-   summary = summarize_outcomes(y, pm, cm)
-   target = route_to_correlated(y, pm, cm)
+   masks = outcome_masks(true_label, pm, cm)
+   summary = summarize_outcomes(true_label, pm, cm)
+   y_router = route_to_correlated(true_label, pm, cm).astype(int)
 
    assert sum(summary[name] for name in masks) == summary["shots"]
-   assert np.array_equal(target, masks["rescue"])
+   assert np.array_equal(y_router, masks["rescue"].astype(int))
    summary
    ```
 
@@ -119,5 +128,5 @@ Create `notebooks/00_dataset_and_feasibility.ipynb`. Your job is to make the wor
 - [ ] Member 1: loader and reproducible train sampler work; schema, split sizes, and missing/odd values are recorded.
 - [ ] Member 2: outcome groups sum to `N`; all requested counts and rates are reported.
 - [ ] Member 3: rescue target and metrics pass hand-checked tests; `make test` passes.
-- [ ] Member 4: notebook runs top to bottom, explains results, records settings, and commits the notebook plus a compact findings note without shot-level data.
+- [ ] Member 4 (you): your notebook runs top to bottom, explains results, records settings, and includes a compact findings note without shot-level data.
 - [ ] Everyone: no test rows informed Day 1 decisions, and no label or decoder prediction is used as a router input feature.
