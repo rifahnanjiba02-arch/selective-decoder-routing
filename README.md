@@ -35,7 +35,7 @@ The rescue opportunity is `PM wrong AND CM correct`. The **oracle LER** is the f
 
 ## Notebooks
 
-The first notebook, `00_dataset_and_feasibility.ipynb`, is in progress. Its saved Colab run covers setup, tests, a 50,000-row train sample, and a compact preview; value checks and decoder results are still pending. The remaining notebooks are planned. Each notebook should call reusable code from the `router` package inside `src/` (for example, `from router.decoders import summarize_outcomes`):
+The first notebook, `00_dataset_and_feasibility.ipynb`, is in progress. Its saved Colab run covers setup, tests, a 50,000-row train sample, and a compact preview. New Task 1 inspection cells were run locally on the same pinned sample; their measured summary is in the notebook and data dictionary, and the cells can be rerun in Colab. Decoder results are still pending. The remaining notebooks are planned. Each notebook should call reusable code from the `router` package inside `src/` (for example, `from router.decoders import summarize_outcomes`):
 
 | Notebook | Responsibility |
 | --- | --- |

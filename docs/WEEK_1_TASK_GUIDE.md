@@ -15,18 +15,18 @@ This is a **feasibility analysis**. It does not train a routing model or measure
 
 ## Progress snapshot — 24 October 2026
 
-The **Task 1 code foundation is merged into `main`** (pull request #1). The initial Colab notebook is also in `main` and has run through training-sample loading. Use these files and complete the pending inspection and analysis cells rather than rebuilding them.
+The **Task 1 code foundation is merged into `main`** (pull request #1). The Task 1 inspection cells were added to the notebook and run locally on the pinned 50,000-row train sample; measured findings are in [the data dictionary](DATA_DICTIONARY.md). The new cells have no saved Colab outputs yet, so they can be rerun there for review. Decoder outcomes, routing targets, and the final findings note remain separate work.
 
 | Work | Status now | Continue with |
 | --- | --- | --- |
-| Load a named split | **Implemented and run:** `load_surface_code_dataset()` loaded `train`; the notebook reports 4,550,000 train rows and the expected 12 columns. | Check field values, missingness, and syndrome shapes on the sample. |
-| Reproducible sample | **Implemented and run:** `sample_split()` selected 50,000 train rows with seed 42. A repeat matched the `label`, `pymatching`, and `correlated_matching` columns; five offline data tests also pass. | Confirm full-row/order reproducibility if required for the final run record. |
+| Load a named split | **Done:** `load_surface_code_dataset()` loaded `train`; the run confirmed 4,550,000 train rows and 12 columns. | Reuse the existing loader for later analyses. |
+| Reproducible sample | **Done:** `sample_split()` selected 50,000 train rows with seed 42. A second selection matched all fields of all sampled rows in order; five offline data tests also pass. | Reuse the same settings for the remaining Week 1 calculations. |
 | Sample settings | **Recorded for the notebook run:** dataset revision `9c51b27ffc51ed7ff3ef3a72167ebf4862d1f2f3`, train sample size 50,000, and seed 42. The repository config still leaves `dataset_revision: null`. | Decide whether to pin the shared config before reporting final results. |
-| Dataset inspection | **Partly done:** the notebook shows the train count, column list, and five compact sample rows. Validation/test sizes are cited from the dataset card. | Complete value-set, missing-count, data-type, and `round_widths`/syndrome shape checks; update `docs/DATA_DICTIONARY.md`. |
+| Dataset inspection | **Done on the sampled train rows:** all 12 field types and missing counts, six relevant value sets, and syndrome/`round_widths` shape and padding checks are recorded in `docs/DATA_DICTIONARY.md`. All required shape checks had zero failing rows. Validation/test sizes are cited from the dataset card. | Review or rerun the new notebook cells in Colab if needed; do not repeat the implementation. |
 | Decoder outcomes and routing target | **Starter functions and a manual test exist;** the notebook's full offline test command passed. No real-sample counts, rates, or `y_router` values have been calculated. | Verify field encoding and run the functions on the sampled rows. |
-| Colab presentation | **Started:** `notebooks/00_dataset_and_feasibility.ipynb` has executed setup, tests, train loading, repeated-sample checks, and a five-row preview. Later analysis sections are headings only; no findings note exists. | Fill the remaining cells, rerun top to bottom, and save a compact findings note. |
+| Colab presentation | **Started:** `notebooks/00_dataset_and_feasibility.ipynb` has saved setup, tests, train loading, and preview outputs. New Task 1 check cells and their measured local-run summary are present; decoder-result sections are still headings only. | Run the new cells in Colab, fill decoder and target results, and save a compact findings note. |
 
-The saved notebook output is evidence of the first Colab run, not a completed feasibility result. Its Hugging Face builder downloaded/prepared validation and test files even though the notebook selected only train rows; no validation or test rows were used for analysis.
+The saved Colab outputs and the subsequent local Task 1 run are evidence for the dataset checks, not a completed decoder feasibility result. Hugging Face downloaded/prepared validation and test files internally, but neither run selected their rows for analysis.
 
 ## Leakage boundary for this task
 
@@ -43,28 +43,28 @@ The saved notebook output is evidence of the first Colab run, not a completed fe
 | 3. Verify the routing target | `src/router/labels.py`, `tests/test_routing.py` | `y_router = 1` only for rescue, with hand-checked tests. |
 | 4. Present the analysis | `notebooks/00_dataset_and_feasibility.ipynb`, `results/feasibility/` | Runnable Colab notebook and compact findings note. |
 
-Tasks 2 and 3 can be checked on manual arrays while Task 1 prepares real data. Task 4 connects the verified functions and sample.
+Task 1 now supplies a checked training sample. Tasks 2 and 3 use it for decoder outcomes and the routing target; Task 4 presents the combined result.
 
 ## Task 1 — Load and inspect the dataset
 
 **Where:** `src/router/data.py` for loading/sampling, `configs/data.yaml` for settings, and `docs/DATA_DICTIONARY.md` for findings.
 
-**Already done in code and the first notebook run:**
+**Done in code and the pinned training-sample run:**
 
 - `load_surface_code_dataset()` reads the config, requests one named split from Hugging Face, defaults to `train`, and returns a split mapping plus the config. The notebook has loaded the real train split and confirmed its 4,550,000-row count.
-- `sample_split()` selects distinct rows using an explicit size and seed. The notebook created a 50,000-row train sample with seed 42, and a repeated call matched the three stored label/prediction columns. Offline reproducibility and input-check tests passed.
+- `sample_split()` selects distinct rows using an explicit size and seed. The 50,000-row train sample with seed 42 matched a repeated selection across every field and row in order. Offline reproducibility and input-check tests passed.
 - Both functions require `allow_test=True` before accessing `test`; that option is reserved for final evaluation. The loader's `split` request controls its returned data, while actual download behavior depends on the dataset builder.
+- The sample had the expected binary `label` and decoder predictions; observed `basis`, `distance`, and `rounds` values were within the published domains. All 11 fields used here had zero missing rows; `tensor_network` was null in all 50,000 sampled rows and is outside scope.
+- All sampled rows passed the dimensions, sequence-length, binary-syndrome, round-width, and zero-padding checks. See [the measured counts and types](DATA_DICTIONARY.md#week-1-task-1-findings-24-october-2026).
 
-**Still to do with real data:**
+**Task 1 follow-up:**
 
-- Extend the repeat check beyond the three stored label/prediction columns if the final record will claim that every sampled row matches in the same order.
-- Keep the notebook's dataset revision pinned. The validation/test row counts currently come from the dataset card; no validation/test rows were selected for analysis.
-- Complete missing counts, data types, and observed values for `label`, `pymatching`, `correlated_matching`, `basis`, `distance`, and `rounds`. The current notebook has only a five-row preview.
-- Check `syndrome`, `round_widths`, `time_steps`, and `width` for shape consistency without printing many full syndrome arrays. Record confirmed interpretations and unresolved questions in [the data dictionary](DATA_DICTIONARY.md).
+- The new notebook cells are prepared and were run locally, but their outputs have not yet been saved from Colab. They can be rerun there to review the same findings. Keep the notebook's dataset revision pinned for comparison.
+- Validation/test counts remain dataset-card metadata; no validation/test rows were selected. Task 1 findings are from the 50,000 sampled train rows, not a validation of every row in the full dataset.
 
 The full dataset, Hugging Face cache, and shot-level output files must stay out of Git.
 
-**Deliver:** the functions, settings, train count, column list, preview, and first notebook run already exist. That run pins the dataset revision. Task 1 is complete only after the remaining value, missingness, and shape checks are recorded and the sample is reproducible from its recorded settings.
+**Deliver:** Task 1's loader, sampler, pinned sample settings, full-row repeat check, schema and missingness results, shape/padding checks, and data-dictionary findings are complete for the 50,000-row training sample.
 
 **Study:** Hugging Face `load_dataset`, train/validation/test splits, and the dataset card referenced in the [data dictionary](DATA_DICTIONARY.md).
 
@@ -169,9 +169,8 @@ Save a compact findings note in `results/feasibility/` with the run settings, sc
 ## Complete by the end of Day 7
 
 - [x] The loader and sampler are implemented; five offline data tests pass.
-- [x] The notebook loaded the real train split and selected 50,000 rows with recorded seed and dataset revision; a repeat matched the three stored label/prediction columns.
-- [ ] Any claimed full-row reproducibility is verified.
-- [ ] Split sizes, columns, key values, missingness, and open data questions are recorded.
+- [x] The pinned train split yielded 50,000 sampled rows; a repeat matched all fields of every row in order.
+- [x] Split metadata, columns, key values, missingness, and shape/padding findings are recorded for the sampled train rows.
 - [ ] The four outcome counts sum to `N`, and all five rates use the correct denominator.
 - [ ] `y_router` is 1 only for PM wrong + CM correct; manual tests and `make test` pass.
 - [ ] The Colab notebook runs top to bottom and matches the verified functions.
