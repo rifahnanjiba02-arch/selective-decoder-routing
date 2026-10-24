@@ -21,7 +21,7 @@ Source: [Bauxitiego/surface-code-syndromes dataset card](https://huggingface.co/
 
 ## Week 1 Task 1 findings (24 October 2026)
 
-The [feasibility notebook](../notebooks/00_dataset_and_feasibility.ipynb) first loaded and previewed a training sample in Colab. The added Task 1 check cells were then run locally on the same pinned dataset revision, `9c51b27ffc51ed7ff3ef3a72167ebf4862d1f2f3`, with **50,000 train rows** and sampling seed `42`. Repeating the selection matched **all fields of all 50,000 sampled rows in the same order**, checked in batches. The repository's `configs/data.yaml` still has `dataset_revision: null`; the run used a temporary pinned config.
+The [feasibility notebook](../notebooks/00_dataset_and_feasibility.ipynb) has saved Colab outputs for these checks on dataset revision `9c51b27ffc51ed7ff3ef3a72167ebf4862d1f2f3`, with **50,000 train rows** and sampling seed `42`. Repeating the selection matched **all fields of all 50,000 sampled rows in the same order**, checked in batches. The repository's `configs/data.yaml` still has `dataset_revision: null`; the notebook used a temporary pinned config.
 
 The loaded train split contained **4,550,000 rows**. The [dataset card](https://huggingface.co/datasets/Bauxitiego/surface-code-syndromes) lists **650,000 validation** and **1,300,000 test** rows. Only train rows were selected for analysis. The Hugging Face loader also downloaded/prepared validation and test files internally, as the notebook's saved output shows.
 

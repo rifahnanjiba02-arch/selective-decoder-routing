@@ -15,18 +15,18 @@ This is a **feasibility analysis**. It does not train a routing model or measure
 
 ## Progress snapshot — 24 October 2026
 
-The **Task 1 code foundation is merged into `main`** (pull request #1). The Task 1 inspection cells were added to the notebook and run locally on the pinned 50,000-row train sample; measured findings are in [the data dictionary](DATA_DICTIONARY.md). The new cells have no saved Colab outputs yet, so they can be rerun there for review. Decoder outcomes, routing targets, and the final findings note remain separate work.
+The **Task 1 code foundation is merged into `main`** (pull request #1). The notebook now has saved Colab outputs for all Task 1 checks on the pinned 50,000-row train sample; measured findings are in [the data dictionary](DATA_DICTIONARY.md). Decoder outcomes, routing targets, and the final findings note remain separate work.
 
 | Work | Status now | Continue with |
 | --- | --- | --- |
 | Load a named split | **Done:** `load_surface_code_dataset()` loaded `train`; the run confirmed 4,550,000 train rows and 12 columns. | Reuse the existing loader for later analyses. |
 | Reproducible sample | **Done:** `sample_split()` selected 50,000 train rows with seed 42. A second selection matched all fields of all sampled rows in order; five offline data tests also pass. | Reuse the same settings for the remaining Week 1 calculations. |
 | Sample settings | **Recorded for the notebook run:** dataset revision `9c51b27ffc51ed7ff3ef3a72167ebf4862d1f2f3`, train sample size 50,000, and seed 42. The repository config still leaves `dataset_revision: null`. | Decide whether to pin the shared config before reporting final results. |
-| Dataset inspection | **Done on the sampled train rows:** all 12 field types and missing counts, six relevant value sets, and syndrome/`round_widths` shape and padding checks are recorded in `docs/DATA_DICTIONARY.md`. All required shape checks had zero failing rows. Validation/test sizes are cited from the dataset card. | Review or rerun the new notebook cells in Colab if needed; do not repeat the implementation. |
+| Dataset inspection | **Done on the sampled train rows:** saved Colab outputs and `docs/DATA_DICTIONARY.md` record all 12 field types and missing counts, six relevant value sets, and syndrome/`round_widths` shape and padding checks. All required shape checks had zero failing rows. Validation/test sizes are cited from the dataset card. | Use the checked sample for decoder calculations. |
 | Decoder outcomes and routing target | **Starter functions and a manual test exist;** the notebook's full offline test command passed. No real-sample counts, rates, or `y_router` values have been calculated. | Verify field encoding and run the functions on the sampled rows. |
-| Colab presentation | **Started:** `notebooks/00_dataset_and_feasibility.ipynb` has saved setup, tests, train loading, and preview outputs. New Task 1 check cells and their measured local-run summary are present; decoder-result sections are still headings only. | Run the new cells in Colab, fill decoder and target results, and save a compact findings note. |
+| Colab presentation | **Task 1 complete:** `notebooks/00_dataset_and_feasibility.ipynb` has saved setup, tests, train loading, preview, and inspection outputs. Decoder-result sections are still headings only. | Fill decoder and target results, then save a compact findings note. |
 
-The saved Colab outputs and the subsequent local Task 1 run are evidence for the dataset checks, not a completed decoder feasibility result. Hugging Face downloaded/prepared validation and test files internally, but neither run selected their rows for analysis.
+The saved Colab outputs establish the sampled-data checks, but decoder feasibility results are still pending. Hugging Face downloaded/prepared validation and test files internally; the notebook selected only train rows for analysis.
 
 ## Leakage boundary for this task
 
@@ -57,10 +57,7 @@ Task 1 now supplies a checked training sample. Tasks 2 and 3 use it for decoder 
 - The sample had the expected binary `label` and decoder predictions; observed `basis`, `distance`, and `rounds` values were within the published domains. All 11 fields used here had zero missing rows; `tensor_network` was null in all 50,000 sampled rows and is outside scope.
 - All sampled rows passed the dimensions, sequence-length, binary-syndrome, round-width, and zero-padding checks. See [the measured counts and types](DATA_DICTIONARY.md#week-1-task-1-findings-24-october-2026).
 
-**Task 1 follow-up:**
-
-- The new notebook cells are prepared and were run locally, but their outputs have not yet been saved from Colab. They can be rerun there to review the same findings. Keep the notebook's dataset revision pinned for comparison.
-- Validation/test counts remain dataset-card metadata; no validation/test rows were selected. Task 1 findings are from the 50,000 sampled train rows, not a validation of every row in the full dataset.
+The saved Colab outputs use the pinned dataset revision. Validation/test counts remain dataset-card metadata; no validation/test rows were selected. Task 1 findings cover the 50,000 sampled train rows, not every row in the full dataset.
 
 The full dataset, Hugging Face cache, and shot-level output files must stay out of Git.
 
