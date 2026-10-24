@@ -13,6 +13,27 @@ Each dataset row is one surface-code shot with a true logical `label` and two st
 
 This is a **feasibility analysis**. It does not train a routing model or measure decoder runtime savings.
 
+## Progress snapshot — 24 October 2026
+
+The current `member-1` working tree has completed the **code foundation for Task 1**, so the loader and sampler should be used and verified rather than rewritten. These edits are still local changes until they are committed and shared.
+
+| Work | Status now | Continue with |
+| --- | --- | --- |
+| Load a named split | **Implemented:** `load_surface_code_dataset()` reads `configs/data.yaml`, requests `train` by default, returns the selected split and config, and requires explicit opt-in for `test`. | Run it with the real Hugging Face dataset and confirm the returned split and schema. |
+| Reproducible sample | **Implemented:** `sample_split()` selects distinct rows with an explicit size and seed, and rejects invalid or oversized requests. Five offline data tests pass. | Reproduce the 50,000-row training sample in the project environment. |
+| Sample settings | **Set:** training size 50,000, validation size 10,000, sampling seed 42; test sample size is unset. The source split seed is recorded separately. | Pin the dataset revision before reporting reproducible results. |
+| Dataset inspection | **Pending:** no actual split-size, column-value, missingness, or shape report has been saved yet. | Inspect real training rows and update `docs/DATA_DICTIONARY.md`. |
+| Decoder outcomes and routing target | **Starter functions and a manual test already exist** in `src/router/decoders.py`, `src/router/labels.py`, and `tests/test_routing.py`; this branch has not produced sample metrics. | Verify field encoding, run the functions on the sampled rows, and check the counts and rates. |
+| Colab presentation | **Pending:** no Week 1 notebook or findings note exists. | Build `notebooks/00_dataset_and_feasibility.ipynb` after the data and metric checks. |
+
+The offline tests check function behavior without downloading data. They do **not** confirm the dataset's actual field values or complete Task 1's inspection deliverable.
+
+## Leakage boundary for this task
+
+- The dataset's published train, validation, and test splits are [stratified within each experiment](https://huggingface.co/datasets/Bauxitiego/surface-code-syndromes). Use them as provided. Results from these splits concern new shots from the same experiments; a claim about unseen experiments needs a separate group-held-out study.
+- `label`, `pymatching`, and `correlated_matching` are present in loaded rows because they are needed for the routing target and outcome evaluation. They must never become router input features. Feature extraction is not implemented in Week 1, so this boundary must be checked again when feature code is written.
+- Training samples come from `train`. The loader and sampler require an explicit `allow_test=True` for test access; this is reserved for final evaluation after all choices are frozen.
+
 ## Tasks and locations
 
 | Task | Where to work | Required result |
@@ -32,6 +53,7 @@ Tasks 2 and 3 can be checked on manual arrays while Task 1 prepares real data. T
 
 - Use Hugging Face `load_dataset` with `Bauxitiego/surface-code-syndromes`. Confirm the published train, validation, and test split names and sizes from metadata.
 - Implement `load_surface_code_dataset()` and `sample_split()`. Document their arguments and return types. The same split, sample size, and seed must yield the same rows in the same order.
+- `load_surface_code_dataset()` requests one named split and defaults to `train`; it returns a split mapping and the config. A development sample uses `sample_split(splits, sample_size=config["development"]["train_size"], seed=config["sampling_seed"])`. Both functions require `allow_test=True` to access `test`; use that option only for final evaluation after choices are frozen. The loader's `split` request controls its returned data; the actual download behavior depends on the dataset builder.
 - Use about **50,000–100,000 rows from the training split** for this task. Record the sample size and sampling seed in the config and notebook. Keep test rows untouched during development.
 - Inspect column names, a few compact rows, missing values, and observed values of `label`, `pymatching`, `correlated_matching`, `basis`, `distance`, and `rounds`.
 - Check `syndrome`, `round_widths`, `time_steps`, and `width` for shape consistency without printing many full syndrome arrays. Record confirmed interpretations and unresolved questions in [the data dictionary](DATA_DICTIONARY.md).
