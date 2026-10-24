@@ -21,7 +21,7 @@ Source: [Bauxitiego/surface-code-syndromes dataset card](https://huggingface.co/
 
 ## Initial Week 1 Colab observation (24 October 2026)
 
-The saved output of [the feasibility notebook](../notebooks/00_dataset_and_feasibility.ipynb) shows a successful train-split load and a 50,000-row sample with seed `42`. It records repository source commit `f05da60e7c496bb014b427de23417713af538dc3` and dataset revision `9c51b27ffc51ed7ff3ef3a72167ebf4862d1f2f3` in a temporary Colab config. The repository's `configs/data.yaml` still has `dataset_revision: null`.
+The saved output of [the feasibility notebook](../notebooks/00_dataset_and_feasibility.ipynb) shows a successful train-split load and a 50,000-row sample with seed `42`. It records dataset revision `9c51b27ffc51ed7ff3ef3a72167ebf4862d1f2f3` in a temporary Colab config. The repository's `configs/data.yaml` still has `dataset_revision: null`.
 
 The loaded train split had **4,550,000 rows** and these 12 columns: `experiment`, `basis`, `distance`, `rounds`, `time_steps`, `width`, `round_widths`, `syndrome`, `label`, `pymatching`, `correlated_matching`, and `tensor_network`. The [dataset card](https://huggingface.co/datasets/Bauxitiego/surface-code-syndromes) lists **650,000 validation** and **1,300,000 test** rows; the notebook did not select rows from either split for analysis. Hugging Face did download/prepare their files during the train load, as its saved output shows.
 

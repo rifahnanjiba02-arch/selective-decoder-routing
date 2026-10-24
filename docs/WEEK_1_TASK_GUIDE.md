@@ -21,7 +21,7 @@ The **Task 1 code foundation is merged into `main`** (pull request #1). The init
 | --- | --- | --- |
 | Load a named split | **Implemented and run:** `load_surface_code_dataset()` loaded `train`; the notebook reports 4,550,000 train rows and the expected 12 columns. | Check field values, missingness, and syndrome shapes on the sample. |
 | Reproducible sample | **Implemented and run:** `sample_split()` selected 50,000 train rows with seed 42. A repeat matched the `label`, `pymatching`, and `correlated_matching` columns; five offline data tests also pass. | Confirm full-row/order reproducibility if required for the final run record. |
-| Sample settings | **Recorded for the notebook run:** repository source commit `f05da60`, dataset revision `9c51b27ffc51ed7ff3ef3a72167ebf4862d1f2f3`, train sample size 50,000, and seed 42. The repository config still leaves `dataset_revision: null`. | Freeze the notebook's `SOURCE_REF` to the recorded commit before final reproduction; decide whether to pin the shared config. |
+| Sample settings | **Recorded for the notebook run:** dataset revision `9c51b27ffc51ed7ff3ef3a72167ebf4862d1f2f3`, train sample size 50,000, and seed 42. The repository config still leaves `dataset_revision: null`. | Decide whether to pin the shared config before reporting final results. |
 | Dataset inspection | **Partly done:** the notebook shows the train count, column list, and five compact sample rows. Validation/test sizes are cited from the dataset card. | Complete value-set, missing-count, data-type, and `round_widths`/syndrome shape checks; update `docs/DATA_DICTIONARY.md`. |
 | Decoder outcomes and routing target | **Starter functions and a manual test exist;** the notebook's full offline test command passed. No real-sample counts, rates, or `y_router` values have been calculated. | Verify field encoding and run the functions on the sampled rows. |
 | Colab presentation | **Started:** `notebooks/00_dataset_and_feasibility.ipynb` has executed setup, tests, train loading, repeated-sample checks, and a five-row preview. Later analysis sections are headings only; no findings note exists. | Fill the remaining cells, rerun top to bottom, and save a compact findings note. |
@@ -58,13 +58,13 @@ Tasks 2 and 3 can be checked on manual arrays while Task 1 prepares real data. T
 **Still to do with real data:**
 
 - Extend the repeat check beyond the three stored label/prediction columns if the final record will claim that every sampled row matches in the same order.
-- Keep the notebook's dataset revision pinned and freeze its repository source commit. The validation/test row counts currently come from the dataset card; no validation/test rows were selected for analysis.
+- Keep the notebook's dataset revision pinned. The validation/test row counts currently come from the dataset card; no validation/test rows were selected for analysis.
 - Complete missing counts, data types, and observed values for `label`, `pymatching`, `correlated_matching`, `basis`, `distance`, and `rounds`. The current notebook has only a five-row preview.
 - Check `syndrome`, `round_widths`, `time_steps`, and `width` for shape consistency without printing many full syndrome arrays. Record confirmed interpretations and unresolved questions in [the data dictionary](DATA_DICTIONARY.md).
 
 The full dataset, Hugging Face cache, and shot-level output files must stay out of Git.
 
-**Deliver:** the functions, settings, pinned notebook run, train count, column list, and preview already exist. Task 1 is complete only after the remaining value, missingness, and shape checks are recorded and the run can be reproduced from frozen settings.
+**Deliver:** the functions, settings, train count, column list, preview, and first notebook run already exist. That run pins the dataset revision. Task 1 is complete only after the remaining value, missingness, and shape checks are recorded and the sample is reproducible from its recorded settings.
 
 **Study:** Hugging Face `load_dataset`, train/validation/test splits, and the dataset card referenced in the [data dictionary](DATA_DICTIONARY.md).
 
@@ -130,13 +130,13 @@ Expected counts are `both_correct = 2`, `rescue = 1`, `harmful_switch = 1`, and 
 
 **Where:** `notebooks/00_dataset_and_feasibility.ipynb` for the analysis and `results/feasibility/` for a compact findings note.
 
-**What to do:** continue the existing notebook. Its executed cells fetch the reusable `router` modules at a resolved repository commit, install the required runtime libraries, run tests, and load a real train sample. The remaining cells must call the reusable functions; do not copy their calculations into notebook cells.
+**What to do:** continue the existing notebook. Its executed cells fetch the reusable `router` modules, install the required runtime libraries, run tests, and load a real train sample. The remaining cells must call the reusable functions; do not copy their calculations into notebook cells.
 
 The notebook should run in this order:
 
 1. **Introduction:** dataset source, question, and scope; explain that the two decoder predictions are stored in the dataset.
-2. **Setup:** use a recorded repository commit and install the required dependencies. The current notebook downloads the needed modules from that commit and adds `src/` to the import path; a full clone and editable install are also valid.
-3. **Run settings:** dataset name/revision if known, repository commit, split, sample size, and sampling seed.
+2. **Setup:** install the required dependencies. The current notebook downloads the needed modules and adds `src/` to the import path; a full clone and editable install are also valid.
+3. **Run settings:** dataset name/revision, split, sample size, and sampling seed.
 4. **Data inspection:** split sizes, columns, compact sample rows, value sets, missing counts, and unresolved schema notes.
 5. **Outcome results:** a four-count table and a five-rate table using `outcome_masks()` and `summarize_outcomes()`.
 6. **Routing target:** call `route_to_correlated()` and show that only rescue rows receive `1`.
@@ -170,7 +170,7 @@ Save a compact findings note in `results/feasibility/` with the run settings, sc
 
 - [x] The loader and sampler are implemented; five offline data tests pass.
 - [x] The notebook loaded the real train split and selected 50,000 rows with recorded seed and dataset revision; a repeat matched the three stored label/prediction columns.
-- [ ] The repository source commit is frozen for the final run, and any claimed full-row reproducibility is verified.
+- [ ] Any claimed full-row reproducibility is verified.
 - [ ] Split sizes, columns, key values, missingness, and open data questions are recorded.
 - [ ] The four outcome counts sum to `N`, and all five rates use the correct denominator.
 - [ ] `y_router` is 1 only for PM wrong + CM correct; manual tests and `make test` pass.

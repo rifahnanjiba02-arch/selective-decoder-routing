@@ -54,7 +54,7 @@ cd selective-decoder-routing
 pip install -e .
 ```
 
-The current Week 1 notebook instead downloads the required `router` files at a recorded repository commit and installs its small runtime dependency set. Both setups call the same package functions; the notebook's source reference must be frozen before a final reproducible run.
+The current Week 1 notebook instead downloads the required `router` files and installs its small runtime dependency set. Both setups call the same package functions.
 
 Install optional QML dependencies only when working on the VQC notebook: `pip install -e '.[qml]'`. Keep notebook code focused on exploration and presentation; add reusable logic to the `router` package inside `src/`.
 
