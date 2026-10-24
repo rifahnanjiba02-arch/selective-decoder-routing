@@ -1,9 +1,11 @@
 dataset_name: Bauxitiego/surface-code-syndromes
-random_seed: 20260806  # Dataset split seed; choose and record a separate sampling seed if needed.
+dataset_revision: null  # Pin a dataset commit before recording reproducible results.
+source_split_seed: 20260806  # Published dataset split seed; do not create new splits.
+sampling_seed: 42  # Pass this explicitly to sample_split().
 development:
-  train_size: 50000       # 50k–100k sample as requested for Day 1
+  train_size: 50000       # Week 1 development sample.
   validation_size: 10000
-  test_size: 10000
+  test_size: null         # Choose only after the final-evaluation policy is fixed.
 paths:
   cache_dir: .cache/huggingface
   feature_dir: artifacts/features

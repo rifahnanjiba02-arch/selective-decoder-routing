@@ -1,45 +1,66 @@
-"""Dataset access, split selection, and development sampling (planned).
+"""Load one published split and draw a reproducible development sample.
 
-The source is Bauxitiego/surface-code-syndromes on Hugging Face. Use its
-published train/validation/test splits; do not read test while designing the
-router. Implement bounded development sampling before any full-data pipeline.
-Keep downloaded data and caches outside Git.
+The default is the training split. Request the test split only for final
+evaluation, after all model and threshold choices are frozen.
 """
-import yaml
-from datasets import load_dataset
+
+from random import Random
 
 
-def load_surface_code_dataset(config_path="configs/data.yaml"):
-    """Loads dataset configuration and downloads/loads the Hugging Face dataset."""
-    with open(config_path, "r") as f:
-        config = yaml.safe_load(f)
+def _check_split_access(split_name, allow_test):
+    if not isinstance(split_name, str) or split_name not in {"train", "validation", "test"}:
+        raise ValueError("split_name must be train, validation, or test")
+    if split_name == "test" and allow_test is not True:
+        raise ValueError("test split is reserved for final evaluation; pass allow_test=True")
+
+
+def load_surface_code_dataset(
+    config_path="configs/data.yaml", split_name="train", *, allow_test=False
+):
+    """Request one named split and return ``({split_name: Dataset}, config)``.
+
+    The caller can pass the returned mapping directly to :func:`sample_split`.
+    The config path is resolved from the current working directory.
+    """
+    _check_split_access(split_name, allow_test)
+
+    import yaml
+    from datasets import load_dataset
+
+    with open(config_path, "r", encoding="utf-8") as config_file:
+        config = yaml.safe_load(config_file)
 
     dataset_name = config["dataset_name"]
     cache_dir = config.get("paths", {}).get("cache_dir", ".cache/huggingface")
+    load_options = {"split": split_name, "cache_dir": cache_dir}
+    if config.get("dataset_revision"):
+        load_options["revision"] = config["dataset_revision"]
 
-    print(f"Loading Hugging Face dataset: {dataset_name}...")
-    dataset = load_dataset(dataset_name, cache_dir=cache_dir)
-
-    return dataset, config
+    dataset = load_dataset(dataset_name, **load_options)
+    return {split_name: dataset}, config
 
 
-def sample_split(dataset, split_name="train", sample_size=50000, seed=42):
-    """Extracts a reproducible sample from the specified dataset split."""
+def sample_split(dataset, split_name="train", sample_size=None, seed=None, *, allow_test=False):
+    """Select ``sample_size`` distinct rows in seeded random order.
+
+    Only the requested number of row indices is generated; the full split is
+    not shuffled. Pass the size and seed recorded in ``configs/data.yaml``.
+    """
+    _check_split_access(split_name, allow_test)
     if split_name not in dataset:
         raise ValueError(
             f"Split '{split_name}' not found. Available splits: {list(dataset.keys())}"
         )
+    if isinstance(sample_size, bool) or not isinstance(sample_size, int) or sample_size <= 0:
+        raise ValueError("sample_size must be a positive integer")
+    if isinstance(seed, bool) or not isinstance(seed, int):
+        raise ValueError("seed must be an integer")
 
     split_data = dataset[split_name]
+    if sample_size > len(split_data):
+        raise ValueError(
+            f"sample_size ({sample_size}) exceeds '{split_name}' split size ({len(split_data)})"
+        )
 
-    if sample_size is None or sample_size >= len(split_data):
-        actual_size = len(split_data)
-    else:
-        actual_size = sample_size
-
-    print(
-        f"Sampling {actual_size} rows from '{split_name}' split (seed={seed})..."
-    )
-    sampled = split_data.shuffle(seed=seed).select(range(actual_size))
-
-    return sampled
+    indices = Random(seed).sample(range(len(split_data)), sample_size)
+    return split_data.select(indices)
