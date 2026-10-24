@@ -15,24 +15,24 @@ This is a **feasibility analysis**. It does not train a routing model or measure
 
 ## Progress snapshot — 24 October 2026
 
-The **code foundation for Task 1 is merged into `main`** (pull request #1). The loader and sampler should be used and verified rather than rewritten. The remaining Task 1 work is a real-data run and its recorded findings.
+The **Task 1 code foundation is merged into `main`** (pull request #1). The initial Colab notebook is also in `main` and has run through training-sample loading. Use these files and complete the pending inspection and analysis cells rather than rebuilding them.
 
 | Work | Status now | Continue with |
 | --- | --- | --- |
-| Load a named split | **Implemented:** `load_surface_code_dataset()` reads `configs/data.yaml`, requests `train` by default, returns the selected split and config, and requires explicit opt-in for `test`. | Run it with the real Hugging Face dataset and confirm the returned split and schema. |
-| Reproducible sample | **Implemented:** `sample_split()` selects distinct rows with an explicit size and seed, and rejects invalid or oversized requests. Five offline data tests pass. | Reproduce the 50,000-row training sample in the project environment. |
-| Sample settings | **Set:** training size 50,000, validation size 10,000, sampling seed 42; test sample size is unset. The source split seed is recorded separately. | Pin the dataset revision before reporting reproducible results. |
-| Dataset inspection | **Pending:** no actual split-size, column-value, missingness, or shape report has been saved yet. | Inspect real training rows and update `docs/DATA_DICTIONARY.md`. |
-| Decoder outcomes and routing target | **Starter functions and a manual test already exist** in `src/router/decoders.py`, `src/router/labels.py`, and `tests/test_routing.py`; this branch has not produced sample metrics. | Verify field encoding, run the functions on the sampled rows, and check the counts and rates. |
-| Colab presentation | **Pending:** no Week 1 notebook or findings note exists. | Build `notebooks/00_dataset_and_feasibility.ipynb` after the data and metric checks. |
+| Load a named split | **Implemented and run:** `load_surface_code_dataset()` loaded `train`; the notebook reports 4,550,000 train rows and the expected 12 columns. | Check field values, missingness, and syndrome shapes on the sample. |
+| Reproducible sample | **Implemented and run:** `sample_split()` selected 50,000 train rows with seed 42. A repeat matched the `label`, `pymatching`, and `correlated_matching` columns; five offline data tests also pass. | Confirm full-row/order reproducibility if required for the final run record. |
+| Sample settings | **Recorded for the notebook run:** repository source commit `f05da60`, dataset revision `9c51b27ffc51ed7ff3ef3a72167ebf4862d1f2f3`, train sample size 50,000, and seed 42. The repository config still leaves `dataset_revision: null`. | Freeze the notebook's `SOURCE_REF` to the recorded commit before final reproduction; decide whether to pin the shared config. |
+| Dataset inspection | **Partly done:** the notebook shows the train count, column list, and five compact sample rows. Validation/test sizes are cited from the dataset card. | Complete value-set, missing-count, data-type, and `round_widths`/syndrome shape checks; update `docs/DATA_DICTIONARY.md`. |
+| Decoder outcomes and routing target | **Starter functions and a manual test exist;** the notebook's full offline test command passed. No real-sample counts, rates, or `y_router` values have been calculated. | Verify field encoding and run the functions on the sampled rows. |
+| Colab presentation | **Started:** `notebooks/00_dataset_and_feasibility.ipynb` has executed setup, tests, train loading, repeated-sample checks, and a five-row preview. Later analysis sections are headings only; no findings note exists. | Fill the remaining cells, rerun top to bottom, and save a compact findings note. |
 
-The offline tests check function behavior without downloading data. They do **not** confirm the dataset's actual field values or complete Task 1's inspection deliverable.
+The saved notebook output is evidence of the first Colab run, not a completed feasibility result. Its Hugging Face builder downloaded/prepared validation and test files even though the notebook selected only train rows; no validation or test rows were used for analysis.
 
 ## Leakage boundary for this task
 
 - The dataset's published train, validation, and test splits are [stratified within each experiment](https://huggingface.co/datasets/Bauxitiego/surface-code-syndromes). Use them as provided. Results from these splits concern new shots from the same experiments; a claim about unseen experiments needs a separate group-held-out study.
 - `label`, `pymatching`, and `correlated_matching` are present in loaded rows because they are needed for the routing target and outcome evaluation. They must never become router input features. Feature extraction is not implemented in Week 1, so this boundary must be checked again when feature code is written.
-- Training samples come from `train`. The loader and sampler require an explicit `allow_test=True` for test access; this is reserved for final evaluation after all choices are frozen.
+- Training samples come from `train`. The loader and sampler require an explicit `allow_test=True` for test access; this is reserved for final evaluation after all choices are frozen. Hugging Face may still prepare other split files internally when loading train, as the saved Colab output shows.
 
 ## Tasks and locations
 
@@ -49,22 +49,22 @@ Tasks 2 and 3 can be checked on manual arrays while Task 1 prepares real data. T
 
 **Where:** `src/router/data.py` for loading/sampling, `configs/data.yaml` for settings, and `docs/DATA_DICTIONARY.md` for findings.
 
-**Already done in code:**
+**Already done in code and the first notebook run:**
 
-- `load_surface_code_dataset()` reads the config, requests one named split from Hugging Face, defaults to `train`, and returns a split mapping plus the config. It has not yet been run against the real dataset.
-- `sample_split()` selects distinct rows using an explicit size and seed. It has passed offline reproducibility and input-check tests. `configs/data.yaml` sets the Week 1 training sample to 50,000 rows and the sampling seed to 42.
+- `load_surface_code_dataset()` reads the config, requests one named split from Hugging Face, defaults to `train`, and returns a split mapping plus the config. The notebook has loaded the real train split and confirmed its 4,550,000-row count.
+- `sample_split()` selects distinct rows using an explicit size and seed. The notebook created a 50,000-row train sample with seed 42, and a repeated call matched the three stored label/prediction columns. Offline reproducibility and input-check tests passed.
 - Both functions require `allow_test=True` before accessing `test`; that option is reserved for final evaluation. The loader's `split` request controls its returned data, while actual download behavior depends on the dataset builder.
 
 **Still to do with real data:**
 
-- Run the existing loader for `train`, then call `sample_split(splits, sample_size=config["development"]["train_size"], seed=config["sampling_seed"])`. Confirm that repeated calls return the same 50,000 rows in the same order.
-- Confirm the published train, validation, and test split names and sizes from dataset metadata without opening test rows. Pin the dataset revision used for the run.
-- Inspect column names, a few compact rows, missing values, and observed values of `label`, `pymatching`, `correlated_matching`, `basis`, `distance`, and `rounds`.
+- Extend the repeat check beyond the three stored label/prediction columns if the final record will claim that every sampled row matches in the same order.
+- Keep the notebook's dataset revision pinned and freeze its repository source commit. The validation/test row counts currently come from the dataset card; no validation/test rows were selected for analysis.
+- Complete missing counts, data types, and observed values for `label`, `pymatching`, `correlated_matching`, `basis`, `distance`, and `rounds`. The current notebook has only a five-row preview.
 - Check `syndrome`, `round_widths`, `time_steps`, and `width` for shape consistency without printing many full syndrome arrays. Record confirmed interpretations and unresolved questions in [the data dictionary](DATA_DICTIONARY.md).
 
 The full dataset, Hugging Face cache, and shot-level output files must stay out of Git.
 
-**Deliver:** the functions and configured sample settings are already present. Task 1 is complete only after the real dataset run records split sizes, columns, relevant values, missing or unusual values, the pinned revision, and evidence that the sample is reproducible.
+**Deliver:** the functions, settings, pinned notebook run, train count, column list, and preview already exist. Task 1 is complete only after the remaining value, missingness, and shape checks are recorded and the run can be reproduced from frozen settings.
 
 **Study:** Hugging Face `load_dataset`, train/validation/test splits, and the dataset card referenced in the [data dictionary](DATA_DICTIONARY.md).
 
@@ -130,12 +130,12 @@ Expected counts are `both_correct = 2`, `rescue = 1`, `harmful_switch = 1`, and 
 
 **Where:** `notebooks/00_dataset_and_feasibility.ipynb` for the analysis and `results/feasibility/` for a compact findings note.
 
-**What to do:** create a notebook that presents and calls the reusable functions in `src/router/`. The notebook does not duplicate their calculations.
+**What to do:** continue the existing notebook. Its executed cells fetch the reusable `router` modules at a resolved repository commit, install the required runtime libraries, run tests, and load a real train sample. The remaining cells must call the reusable functions; do not copy their calculations into notebook cells.
 
 The notebook should run in this order:
 
 1. **Introduction:** dataset source, question, and scope; explain that the two decoder predictions are stored in the dataset.
-2. **Setup:** clone the repository in a fresh Colab runtime and run `%pip install -e .` from the repository root.
+2. **Setup:** use a recorded repository commit and install the required dependencies. The current notebook downloads the needed modules from that commit and adds `src/` to the import path; a full clone and editable install are also valid.
 3. **Run settings:** dataset name/revision if known, repository commit, split, sample size, and sampling seed.
 4. **Data inspection:** split sizes, columns, compact sample rows, value sets, missing counts, and unresolved schema notes.
 5. **Outcome results:** a four-count table and a five-rate table using `outcome_masks()` and `summarize_outcomes()`.
@@ -169,7 +169,8 @@ Save a compact findings note in `results/feasibility/` with the run settings, sc
 ## Complete by the end of Day 7
 
 - [x] The loader and sampler are implemented; five offline data tests pass.
-- [ ] A real 50,000-row training sample reproduces in the same order with the recorded seed and dataset revision.
+- [x] The notebook loaded the real train split and selected 50,000 rows with recorded seed and dataset revision; a repeat matched the three stored label/prediction columns.
+- [ ] The repository source commit is frozen for the final run, and any claimed full-row reproducibility is verified.
 - [ ] Split sizes, columns, key values, missingness, and open data questions are recorded.
 - [ ] The four outcome counts sum to `N`, and all five rates use the correct denominator.
 - [ ] `y_router` is 1 only for PM wrong + CM correct; manual tests and `make test` pass.

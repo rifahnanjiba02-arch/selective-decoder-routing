@@ -33,13 +33,13 @@ Start by checking the dataset schema and split definitions on a small developmen
 
 The rescue opportunity is `PM wrong AND CM correct`. The **oracle LER** is the fraction `PM wrong AND CM wrong`: even a perfect selector of these two predictions fails there. PyMatching LER and correlated-matching LER are each the fraction of shots their respective decoder gets wrong. Use decoder predictions and the true label only for targets and evaluation, never as router input features.
 
-## Planned notebooks
+## Notebooks
 
-There are **no `.ipynb` files in the repository yet**. Create these six notebooks in `notebooks/` when ready. Each should have a title, purpose, short Colab setup section, and placeholders that call reusable code from the `router` package inside `src/` (for example, `from router.decoders import summarize_outcomes`):
+The first notebook, `00_dataset_and_feasibility.ipynb`, is in progress. Its saved Colab run covers setup, tests, a 50,000-row train sample, and a compact preview; value checks and decoder results are still pending. The remaining notebooks are planned. Each notebook should call reusable code from the `router` package inside `src/` (for example, `from router.decoders import summarize_outcomes`):
 
 | Notebook | Responsibility |
 | --- | --- |
-| `00_dataset_and_feasibility.ipynb` | Day 1: inspect schema, rows, and splits; calculate four outcome groups, both decoder LERs, rescue opportunity, and oracle LER. |
+| `00_dataset_and_feasibility.ipynb` | Week 1, in progress: inspect schema, rows, and splits; calculate four outcome groups, both decoder LERs, rescue opportunity, and oracle LER. |
 | `01_feature_engineering.ipynb` | Validate detection-event count and density, round activity, active rounds, maximum round activity, distance, rounds, and basis. Mask padded syndrome positions with `round_widths`. |
 | `02_classical_routers.ipynb` | Try a Dummy baseline, Logistic Regression, Random Forest, and XGBoost on the same routing target. |
 | `03_qml_router.ipynb` | Explore a VQC/QML routing candidate using compact features for the same routing objective. |
@@ -53,6 +53,8 @@ git clone https://github.com/rifahnanjiba02-arch/selective-decoder-routing.git
 cd selective-decoder-routing
 pip install -e .
 ```
+
+The current Week 1 notebook instead downloads the required `router` files at a recorded repository commit and installs its small runtime dependency set. Both setups call the same package functions; the notebook's source reference must be frozen before a final reproducible run.
 
 Install optional QML dependencies only when working on the VQC notebook: `pip install -e '.[qml]'`. Keep notebook code focused on exploration and presentation; add reusable logic to the `router` package inside `src/`.
 
@@ -69,8 +71,8 @@ selective-decoder-routing/
 │   ├── data.yaml
 │   ├── features.yaml
 │   └── models.yaml
-├── notebooks/                 # planned, no notebooks committed yet
-│   ├── 00_dataset_and_feasibility.ipynb  (planned)
+├── notebooks/
+│   ├── 00_dataset_and_feasibility.ipynb  (in progress)
 │   ├── 01_feature_engineering.ipynb      (planned)
 │   ├── 02_classical_routers.ipynb        (planned)
 │   ├── 03_qml_router.ipynb               (planned)
@@ -104,11 +106,13 @@ selective-decoder-routing/
 ├── docs/
 │   ├── PROJECT_GUIDE.md
 │   ├── DATA_DICTIONARY.md
-│   └── EXPERIMENT_PROTOCOL.md
+│   ├── EXPERIMENT_PROTOCOL.md
+│   ├── WEEK_1_TASK_GUIDE.md
+│   └── WEEK_1_SCHEDULE.md
 ├── paper/
 │   └── README.md
 └── tests/
-    ├── test_data.py          (planned)
+    ├── test_data.py
     ├── test_features.py      (planned)
     └── test_routing.py
 ```
