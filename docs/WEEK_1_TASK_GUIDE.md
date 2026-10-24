@@ -15,7 +15,7 @@ This is a **feasibility analysis**. It does not train a routing model or measure
 
 ## Progress snapshot — 24 October 2026
 
-The current `member-1` working tree has completed the **code foundation for Task 1**, so the loader and sampler should be used and verified rather than rewritten. These edits are still local changes until they are committed and shared.
+The **code foundation for Task 1 is merged into `main`** (pull request #1). The loader and sampler should be used and verified rather than rewritten. The remaining Task 1 work is a real-data run and its recorded findings.
 
 | Work | Status now | Continue with |
 | --- | --- | --- |
@@ -49,18 +49,22 @@ Tasks 2 and 3 can be checked on manual arrays while Task 1 prepares real data. T
 
 **Where:** `src/router/data.py` for loading/sampling, `configs/data.yaml` for settings, and `docs/DATA_DICTIONARY.md` for findings.
 
-**What to do:**
+**Already done in code:**
 
-- Use Hugging Face `load_dataset` with `Bauxitiego/surface-code-syndromes`. Confirm the published train, validation, and test split names and sizes from metadata.
-- Implement `load_surface_code_dataset()` and `sample_split()`. Document their arguments and return types. The same split, sample size, and seed must yield the same rows in the same order.
-- `load_surface_code_dataset()` requests one named split and defaults to `train`; it returns a split mapping and the config. A development sample uses `sample_split(splits, sample_size=config["development"]["train_size"], seed=config["sampling_seed"])`. Both functions require `allow_test=True` to access `test`; use that option only for final evaluation after choices are frozen. The loader's `split` request controls its returned data; the actual download behavior depends on the dataset builder.
-- Use about **50,000–100,000 rows from the training split** for this task. Record the sample size and sampling seed in the config and notebook. Keep test rows untouched during development.
+- `load_surface_code_dataset()` reads the config, requests one named split from Hugging Face, defaults to `train`, and returns a split mapping plus the config. It has not yet been run against the real dataset.
+- `sample_split()` selects distinct rows using an explicit size and seed. It has passed offline reproducibility and input-check tests. `configs/data.yaml` sets the Week 1 training sample to 50,000 rows and the sampling seed to 42.
+- Both functions require `allow_test=True` before accessing `test`; that option is reserved for final evaluation. The loader's `split` request controls its returned data, while actual download behavior depends on the dataset builder.
+
+**Still to do with real data:**
+
+- Run the existing loader for `train`, then call `sample_split(splits, sample_size=config["development"]["train_size"], seed=config["sampling_seed"])`. Confirm that repeated calls return the same 50,000 rows in the same order.
+- Confirm the published train, validation, and test split names and sizes from dataset metadata without opening test rows. Pin the dataset revision used for the run.
 - Inspect column names, a few compact rows, missing values, and observed values of `label`, `pymatching`, `correlated_matching`, `basis`, `distance`, and `rounds`.
 - Check `syndrome`, `round_widths`, `time_steps`, and `width` for shape consistency without printing many full syndrome arrays. Record confirmed interpretations and unresolved questions in [the data dictionary](DATA_DICTIONARY.md).
 
 The full dataset, Hugging Face cache, and shot-level output files must stay out of Git.
 
-**Deliver:** working `load_surface_code_dataset()` and `sample_split()` functions; recorded split sizes, columns, relevant values, missing or unusual values, sample size, and seed. The sample must be reproducible from the documented settings.
+**Deliver:** the functions and configured sample settings are already present. Task 1 is complete only after the real dataset run records split sizes, columns, relevant values, missing or unusual values, the pinned revision, and evidence that the sample is reproducible.
 
 **Study:** Hugging Face `load_dataset`, train/validation/test splits, and the dataset card referenced in the [data dictionary](DATA_DICTIONARY.md).
 
@@ -93,7 +97,7 @@ oracle_ler              = both_wrong / N
 
 **Study:** Boolean masks, NumPy array comparisons, logical error rate, and the [project guide](PROJECT_GUIDE.md).
 
-## Task 3 — Create and verify the routing target
+## Task 3 — Verify the routing target
 
 **Where:** `src/router/labels.py` for `route_to_correlated()` and `tests/test_routing.py` for hand-checked tests.
 
@@ -164,7 +168,8 @@ Save a compact findings note in `results/feasibility/` with the run settings, sc
 
 ## Complete by the end of Day 7
 
-- [ ] The loader and seeded training sampler reproduce the same rows.
+- [x] The loader and sampler are implemented; five offline data tests pass.
+- [ ] A real 50,000-row training sample reproduces in the same order with the recorded seed and dataset revision.
 - [ ] Split sizes, columns, key values, missingness, and open data questions are recorded.
 - [ ] The four outcome counts sum to `N`, and all five rates use the correct denominator.
 - [ ] `y_router` is 1 only for PM wrong + CM correct; manual tests and `make test` pass.
