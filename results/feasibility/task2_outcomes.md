@@ -6,6 +6,7 @@ The run used a temporary copy of `configs/data.yaml` with that revision pinned.
 It loaded the train split with `load_surface_code_dataset()` and selected rows
 with the repository's `sample_split()`. Counts and rates came from
 `outcome_masks()` and `summarize_outcomes()`; the four counts sum to N.
+The notebook's saved Colab decoder tables and checks reproduce these results.
 
 | Outcome | Count | Share of N |
 | --- | ---: | ---: |
