@@ -12,13 +12,15 @@ def _as_binary(x, name):
     return arr.astype(bool)
 
 
-def outcome_masks(true_label, pm, cm):
+def outcome_masks(label, pymatching, correlated_matching):
     """Return four boolean masks. Each row is in exactly one mask."""
-    y = _as_binary(true_label, "label")
-    p = _as_binary(pm, "pymatching")
-    c = _as_binary(cm, "correlated_matching")
+    y = _as_binary(label, "label")
+    p = _as_binary(pymatching, "pymatching")
+    c = _as_binary(correlated_matching, "correlated_matching")
     if not (len(y) == len(p) == len(c)):
         raise ValueError("label, pymatching, correlated_matching must have equal length")
+    if y.size == 0:
+        raise ValueError("at least one shot is required")
 
     pm_ok = p == y   # PM correct
     cm_ok = c == y   # CM correct
@@ -30,17 +32,15 @@ def outcome_masks(true_label, pm, cm):
     }
 
 
-def summarize_outcomes(true_label, pm, cm):
+def summarize_outcomes(label, pymatching, correlated_matching):
     """Return shots, four counts and five rates (denominator = N)."""
-    masks = outcome_masks(true_label, pm, cm)
+    masks = outcome_masks(label, pymatching, correlated_matching)
     n = len(masks["both_correct"])
-    if n == 0:
-        raise ValueError("empty input")
     counts = {k: int(v.sum()) for k, v in masks.items()}
     assert sum(counts.values()) == n  # masks cover every row, no overlap
 
-    p = np.asarray(pm).astype(bool)
-    c = np.asarray(cm).astype(bool)
+    p = np.asarray(pymatching).astype(bool)
+    c = np.asarray(correlated_matching).astype(bool)
     return {
         "shots": n,
         **counts,
