@@ -40,3 +40,13 @@ class RoutingTests(unittest.TestCase):
             choose_correlated([0.2, 1.2], threshold=0.5)
         with self.assertRaises(ValueError):
             outcome_masks([0, 1], [0], [0, 1])
+
+    def test_decoder_api_rejects_empty_shots_and_accepts_keyword_inputs(self):
+        with self.assertRaises(ValueError):
+            outcome_masks([], [], [])
+        with self.assertRaises(ValueError):
+            summarize_outcomes([], [], [])
+
+        inputs = {"label": [0, 1], "pymatching": [0, 0], "correlated_matching": [0, 1]}
+        self.assertEqual(outcome_masks(**inputs)["rescue"].tolist(), [False, True])
+        self.assertEqual(summarize_outcomes(**inputs)["rescue"], 1)
