@@ -13,20 +13,21 @@ Each dataset row is one surface-code shot with a true logical `label` and two st
 
 This is a **feasibility analysis**. It does not train a routing model or measure decoder runtime savings.
 
-## Progress snapshot — 24 October 2026
+## Progress snapshot — 3 November 2026
 
-The **Task 1 code foundation is merged into `main`** (pull request #1). The notebook now has saved Colab outputs for all Task 1 checks on the pinned 50,000-row train sample; measured findings are in [the data dictionary](DATA_DICTIONARY.md). Decoder outcomes, routing targets, and the final findings note remain separate work.
+Tasks 1 and 2 are merged into `main` (pull requests #1 and #2). The notebook has saved Colab outputs for Task 1's checks on the pinned 50,000-row train sample; schema findings are in [the data dictionary](DATA_DICTIONARY.md). Task 2's outcome calculations were verified separately on that sample and recorded in [the Task 2 findings](../results/feasibility/task2_outcomes.md). Task 3 and the final notebook presentation remain.
 
 | Work | Status now | Continue with |
 | --- | --- | --- |
 | Load a named split | **Done:** `load_surface_code_dataset()` loaded `train`; the run confirmed 4,550,000 train rows and 12 columns. | Reuse the existing loader for later analyses. |
 | Reproducible sample | **Done:** `sample_split()` selected 50,000 train rows with seed 42. A second selection matched all fields of all sampled rows in order; five offline data tests also pass. | Reuse the same settings for the remaining Week 1 calculations. |
-| Sample settings | **Recorded for the notebook run:** dataset revision `9c51b27ffc51ed7ff3ef3a72167ebf4862d1f2f3`, train sample size 50,000, and seed 42. The repository config still leaves `dataset_revision: null`. | Decide whether to pin the shared config before reporting final results. |
-| Dataset inspection | **Done on the sampled train rows:** saved Colab outputs and `docs/DATA_DICTIONARY.md` record all 12 field types and missing counts, six relevant value sets, and syndrome/`round_widths` shape and padding checks. All required shape checks had zero failing rows. Validation/test sizes are cited from the dataset card. | Use the checked sample for decoder calculations. |
-| Decoder outcomes and routing target | **Starter functions and a manual test exist;** the notebook's full offline test command passed. No real-sample counts, rates, or `y_router` values have been calculated. | Verify field encoding and run the functions on the sampled rows. |
-| Colab presentation | **Task 1 complete:** `notebooks/00_dataset_and_feasibility.ipynb` has saved setup, tests, train loading, preview, and inspection outputs. Decoder-result sections are still headings only. | Fill decoder and target results, then save a compact findings note. |
+| Sample settings | **Recorded for both runs:** dataset revision `9c51b27ffc51ed7ff3ef3a72167ebf4862d1f2f3`, train sample size 50,000, and seed 42. The repository config still leaves `dataset_revision: null`; both runs used a temporary pinned config. | Keep the exact revision in the final notebook and report. |
+| Dataset inspection | **Done on the sampled train rows:** saved Colab outputs and `docs/DATA_DICTIONARY.md` record all 12 field types and missing counts, six relevant value sets, and syndrome/`round_widths` shape and padding checks. All required shape checks had zero failing rows. Validation/test sizes are cited from the dataset card. | Reference the checked schema in the final presentation. |
+| Decoder outcomes | **Done:** `outcome_masks()` and `summarize_outcomes()` passed manual tests and produced four counts and five rates on the pinned train sample. The counts sum to 50,000; results are in [the Task 2 findings](../results/feasibility/task2_outcomes.md). | Present the verified results in the notebook. |
+| Routing target | **Task 3 pending:** `route_to_correlated()` and a manual test exist. A sample check matched the rescue mask, but the Task 3 review and presentation remain. | Verify the target rule and tests as specified below. |
+| Colab presentation | **Task 1 complete:** `notebooks/00_dataset_and_feasibility.ipynb` has saved setup, tests, train loading, preview, and inspection outputs. Decoder-result sections are still headings only. | Fill the decoder and target sections, then complete the combined findings note. |
 
-The saved Colab outputs establish the sampled-data checks, but decoder feasibility results are still pending. Hugging Face downloaded/prepared validation and test files internally; the notebook selected only train rows for analysis.
+The saved Colab outputs establish the sampled-data checks; the separate Task 2 run establishes the decoder counts and rates. The notebook still needs saved decoder results. Hugging Face downloaded/prepared validation and test files internally during the Task 1 run; only train rows were selected for analysis.
 
 ## Leakage boundary for this task
 
@@ -67,7 +68,7 @@ The full dataset, Hugging Face cache, and shot-level output files must stay out 
 
 ## Task 2 — Calculate decoder outcomes
 
-**Where:** `src/router/decoders.py`. The functions `outcome_masks()` and `summarize_outcomes()` already exist as starter code.
+**Where:** `src/router/decoders.py`. The functions `outcome_masks()` and `summarize_outcomes()` are implemented and verified.
 
 **What to do:** verify those functions against the actual value encoding. For each row, compare PM and CM with the true `label` and assign exactly one outcome:
 
@@ -91,6 +92,8 @@ oracle_ler              = both_wrong / N
 **Rescue opportunity** is the share of rows where CM can fix PM. **Oracle LER** is the share where both decoders fail, even if a selector always chooses the better prediction. They are different quantities.
 
 **Deliver:** `outcome_masks()` and `summarize_outcomes()` verified on manual and sampled rows. Report `both_correct`, `rescue`, `harmful_switch`, `both_wrong`, `pymatching_ler`, `correlated_matching_ler`, `rescue_opportunity`, `decoder_disagreement`, and `oracle_ler` with the sample size `N`.
+
+**Verified result:** On the pinned 50,000-row train sample, the counts were 32,055 both correct, 4,625 rescue, 3,728 harmful switch, and 9,592 both wrong. The five rates and reproducibility settings are in [the Task 2 findings](../results/feasibility/task2_outcomes.md). All four counts sum to `N`; Task 2 is complete.
 
 **Study:** Boolean masks, NumPy array comparisons, logical error rate, and the [project guide](PROJECT_GUIDE.md).
 
@@ -168,10 +171,10 @@ Save a compact findings note in `results/feasibility/` with the run settings, sc
 - [x] The loader and sampler are implemented; five offline data tests pass.
 - [x] The pinned train split yielded 50,000 sampled rows; a repeat matched all fields of every row in order.
 - [x] Split metadata, columns, key values, missingness, and shape/padding findings are recorded for the sampled train rows.
-- [ ] The four outcome counts sum to `N`, and all five rates use the correct denominator.
+- [x] The four outcome counts sum to `N`, and all five rates use the correct denominator.
 - [ ] `y_router` is 1 only for PM wrong + CM correct; manual tests and `make test` pass.
 - [ ] The Colab notebook runs top to bottom and matches the verified functions.
-- [ ] A compact findings note records settings and results without shot-level data.
+- [ ] The final combined findings note records settings, schema, and results without shot-level data; a Task 2-only note is saved.
 - [ ] No test rows informed development, and no true label or stored decoder prediction is used as a router input feature.
 
 For background and constraints, see the [project guide](PROJECT_GUIDE.md), [data dictionary](DATA_DICTIONARY.md), and [experiment protocol](EXPERIMENT_PROTOCOL.md).
