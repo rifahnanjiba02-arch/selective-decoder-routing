@@ -35,11 +35,11 @@ The rescue opportunity is `PM wrong AND CM correct`. The **oracle LER** is the f
 
 ## Notebooks
 
-The first notebook, `00_dataset_and_feasibility.ipynb`, is in progress. Its saved Colab run covers setup, tests, the 50,000-row train sample, and all Task 1 data checks, which are recorded in the [data dictionary](docs/DATA_DICTIONARY.md). Task 2's decoder outcomes were verified separately on the same pinned train sample and are recorded in the [Task 2 findings](results/feasibility/task2_outcomes.md). Task 3's routing target and hand-checked tests are complete on the `task-3` branch; the repository unittest suite passes. The notebook's decoder-result and routing-target sections still need to be completed. The remaining notebooks are planned. Each notebook should call reusable code from the `router` package inside `src/` (for example, `from router.decoders import summarize_outcomes`):
+The first notebook, `00_dataset_and_feasibility.ipynb`, is complete. Its saved Colab run covers the pinned 50,000-row train sample, schema checks, four decoder outcomes, five rates, and the rescue-only routing target. All 16 code cells ran in order with no error outputs. The [data dictionary](docs/DATA_DICTIONARY.md) records the schema checks, and the [combined Week 1 findings](results/feasibility/week1_findings.md) record settings, results, and limitations. The remaining notebooks are planned. Each notebook should call reusable code from the `router` package inside `src/` (for example, `from router.decoders import summarize_outcomes`):
 
 | Notebook | Responsibility |
 | --- | --- |
-| `00_dataset_and_feasibility.ipynb` | Week 1, in progress: inspect schema, rows, and splits; calculate four outcome groups, both decoder LERs, rescue opportunity, and oracle LER. |
+| `00_dataset_and_feasibility.ipynb` | Week 1, complete: inspect the train sample and schema; calculate decoder outcomes, rates, and the rescue-only routing target. |
 | `01_feature_engineering.ipynb` | Validate detection-event count and density, round activity, active rounds, maximum round activity, distance, rounds, and basis. Mask padded syndrome positions with `round_widths`. |
 | `02_classical_routers.ipynb` | Try a Dummy baseline, Logistic Regression, Random Forest, and XGBoost on the same routing target. |
 | `03_qml_router.ipynb` | Explore a VQC/QML routing candidate using compact features for the same routing objective. |
@@ -72,7 +72,7 @@ selective-decoder-routing/
 │   ├── features.yaml
 │   └── models.yaml
 ├── notebooks/
-│   ├── 00_dataset_and_feasibility.ipynb  (in progress)
+│   ├── 00_dataset_and_feasibility.ipynb  (complete)
 │   ├── 01_feature_engineering.ipynb      (planned)
 │   ├── 02_classical_routers.ipynb        (planned)
 │   ├── 03_qml_router.ipynb               (planned)

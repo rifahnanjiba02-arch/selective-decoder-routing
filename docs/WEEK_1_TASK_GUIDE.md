@@ -13,21 +13,21 @@ Each dataset row is one surface-code shot with a true logical `label` and two st
 
 This is a **feasibility analysis**. It does not train a routing model or measure decoder runtime savings.
 
-## Progress snapshot — 5 November 2026
+## Completion snapshot — 5 November 2026
 
-Tasks 1 and 2 are merged into `main` (pull requests #1 and #2). Task 3 is verified on the `task-3` branch and has not been merged into `main`. The notebook has saved Colab outputs for Task 1's checks on the pinned 50,000-row train sample; schema findings are in [the data dictionary](DATA_DICTIONARY.md). Task 2's outcome calculations were verified separately on that sample and recorded in [the Task 2 findings](../results/feasibility/task2_outcomes.md). The final notebook presentation remains.
+All four Week 1 tasks are complete. Tasks 1–3 are merged into `main`; the [executed notebook](../notebooks/00_dataset_and_feasibility.ipynb) and [combined findings note](../results/feasibility/week1_findings.md) complete Task 4. The notebook's 16 code cells ran in order with no error outputs, and its decoder counts and rates match the separately verified [Task 2 findings](../results/feasibility/task2_outcomes.md).
 
-| Work | Status now | Continue with |
-| --- | --- | --- |
-| Load a named split | **Done:** `load_surface_code_dataset()` loaded `train`; the run confirmed 4,550,000 train rows and 12 columns. | Reuse the existing loader for later analyses. |
-| Reproducible sample | **Done:** `sample_split()` selected 50,000 train rows with seed 42. A second selection matched all fields of all sampled rows in order; five offline data tests also pass. | Reuse the same settings for the remaining Week 1 calculations. |
-| Sample settings | **Recorded for both runs:** dataset revision `9c51b27ffc51ed7ff3ef3a72167ebf4862d1f2f3`, train sample size 50,000, and seed 42. The repository config still leaves `dataset_revision: null`; both runs used a temporary pinned config. | Keep the exact revision in the final notebook and report. |
-| Dataset inspection | **Done on the sampled train rows:** saved Colab outputs and `docs/DATA_DICTIONARY.md` record all 12 field types and missing counts, six relevant value sets, and syndrome/`round_widths` shape and padding checks. All required shape checks had zero failing rows. Validation/test sizes are cited from the dataset card. | Reference the checked schema in the final presentation. |
-| Decoder outcomes | **Done:** `outcome_masks()` and `summarize_outcomes()` passed manual tests and produced four counts and five rates on the pinned train sample. The counts sum to 50,000; results are in [the Task 2 findings](../results/feasibility/task2_outcomes.md). | Present the verified results in the notebook. |
-| Routing target | **Task 3 done on `task-3`:** `route_to_correlated()` returns the rescue mask. Hand-checked tests cover all four outcomes, both logical-label values, disagreement, mask coverage, and unequal input lengths. All 15 repository tests pass. | Present the verified target in the Task 4 notebook. |
-| Colab presentation | **Task 1 complete:** `notebooks/00_dataset_and_feasibility.ipynb` has saved setup, tests, train loading, preview, and inspection outputs. Decoder-result sections are still headings only. | Fill the decoder and target sections, then complete the combined findings note. |
+| Work | Verified result |
+| --- | --- |
+| Load a named split | `load_surface_code_dataset()` loaded `train`: 4,550,000 rows and 12 columns. |
+| Reproducible sample | `sample_split()` selected 50,000 train rows with seed 42; a second selection matched every field of every row in order. |
+| Sample settings | Dataset revision `9c51b27ffc51ed7ff3ef3a72167ebf4862d1f2f3`, train sample size 50,000, and seed 42 are saved in the notebook and combined note. The notebook used a temporary pinned config; `configs/data.yaml` still leaves `dataset_revision: null`. |
+| Dataset inspection | The [data dictionary](DATA_DICTIONARY.md) records all 12 field types and missing counts, relevant value sets, and syndrome/`round_widths` shape and padding checks. All required shape checks had zero failing sampled rows. |
+| Decoder outcomes | `outcome_masks()` and `summarize_outcomes()` produced four counts summing to 50,000 and five rates. The saved notebook agrees with the [Task 2 findings](../results/feasibility/task2_outcomes.md). |
+| Routing target | `route_to_correlated()` returns the rescue mask. Hand-checked tests cover all four outcomes, both logical-label values, disagreement, mask coverage, and unequal input lengths. All 15 repository tests pass; the notebook shows 4,625 positive targets, all rescue rows. |
+| Colab presentation | The notebook includes saved data checks, outcome and rate tables, the routing-target table, final assertions, and interpretation. The [combined findings note](../results/feasibility/week1_findings.md) records settings, schema, results, and limitations. |
 
-The saved Colab outputs establish the sampled-data checks; the separate Task 2 run establishes the decoder counts and rates. The notebook still needs saved decoder results. Hugging Face downloaded/prepared validation and test files internally during the Task 1 run; only train rows were selected for analysis.
+Hugging Face downloaded/prepared validation and test files internally during the Colab run; only train rows were selected for analysis. The combined note contains no shot-level rows.
 
 ## Leakage boundary for this task
 
@@ -124,7 +124,7 @@ Expected counts are `both_correct = 2`, `rescue = 1`, `harmful_switch = 1`, and 
 
 **Deliver:** verified `route_to_correlated()` and tests for both correct, rescue, harmful switch, and both wrong. The tests must confirm the routing target and Task 2's metric formulas on a tiny manual dataset.
 
-**Verified result:** The existing function returns `True` only for rescue, corresponding to `y_router = 1`. Commit `1054fa1` added hand-checked tests without changing the function. On 5 November 2026, the Makefile's equivalent commands in PowerShell (`$env:PYTHONPATH='src'; python -m unittest discover -s tests`) passed all 15 tests; `make` was unavailable in that environment. Task 3 is complete on the `task-3` branch.
+**Verified result:** The existing function returns `True` only for rescue, corresponding to `y_router = 1`. Commit `1054fa1` added hand-checked tests without changing the function, and pull request #3 merged Task 3 into `main`. On 5 November 2026, the Makefile's equivalent commands in PowerShell (`$env:PYTHONPATH='src'; python -m unittest discover -s tests`) passed all 15 tests; `make` was unavailable in that environment.
 
 **Study:** the [experiment protocol](EXPERIMENT_PROTOCOL.md), basic test assertions, and data leakage.
 
@@ -132,7 +132,7 @@ Expected counts are `both_correct = 2`, `rescue = 1`, `harmful_switch = 1`, and 
 
 **Where:** `notebooks/00_dataset_and_feasibility.ipynb` for the analysis and `results/feasibility/` for a compact findings note.
 
-**What to do:** continue the existing notebook. Its executed cells fetch the reusable `router` modules, install the required runtime libraries, run tests, and load a real train sample. The remaining cells must call the reusable functions; do not copy their calculations into notebook cells.
+**Implementation:** The executed notebook fetches the reusable `router` modules, installs the required runtime libraries, runs tests, and loads a real train sample. The result cells call the reusable functions without copying their calculations into notebook cells.
 
 The notebook should run in this order:
 
@@ -166,6 +166,8 @@ Save a compact findings note in `results/feasibility/` with the run settings, sc
 
 **Deliver:** a notebook that runs top to bottom in a fresh Colab runtime, shows the schema and decoder results, explains `y_router` and oracle LER, and records enough settings to reproduce the sample; plus the compact findings note.
 
+**Verified result:** The saved Colab run executed all 16 code cells in order without error outputs. It reproduced the pinned sample, matched the Task 2 counts and rates, showed `y_router = 1` only for the 4,625 rescue rows, and passed the final assertions. The [combined findings note](../results/feasibility/week1_findings.md) records the run settings, schema findings, outcome counts, rates, and limitations without shot-level rows.
+
 **Study:** Colab setup, Python package imports, and the [project guide](PROJECT_GUIDE.md).
 
 ## Complete by the end of Day 7
@@ -175,8 +177,8 @@ Save a compact findings note in `results/feasibility/` with the run settings, sc
 - [x] Split metadata, columns, key values, missingness, and shape/padding findings are recorded for the sampled train rows.
 - [x] The four outcome counts sum to `N`, and all five rates use the correct denominator.
 - [x] `y_router` is 1 only for PM wrong + CM correct; manual tests and the repository unittest suite pass.
-- [ ] The Colab notebook runs top to bottom and matches the verified functions.
-- [ ] The final combined findings note records settings, schema, and results without shot-level data; a Task 2-only note is saved.
-- [ ] No test rows informed development, and no true label or stored decoder prediction is used as a router input feature.
+- [x] The Colab notebook runs top to bottom and matches the verified functions.
+- [x] The final combined findings note records settings, schema, and results without shot-level data; a Task 2-only note is saved.
+- [x] No test rows informed development, and no true label or stored decoder prediction is used as a router input feature.
 
 For background and constraints, see the [project guide](PROJECT_GUIDE.md), [data dictionary](DATA_DICTIONARY.md), and [experiment protocol](EXPERIMENT_PROTOCOL.md).
