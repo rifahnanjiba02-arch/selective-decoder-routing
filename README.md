@@ -35,13 +35,13 @@ The rescue opportunity is `PM wrong AND CM correct`. The **oracle LER** is the f
 
 ## Notebooks
 
-The first notebook, `00_dataset_and_feasibility.ipynb`, is complete. Its saved Colab run covers the pinned 50,000-row train sample, schema checks, four decoder outcomes, five rates, and the rescue-only routing target. All 16 code cells ran in order with no error outputs. The [data dictionary](docs/DATA_DICTIONARY.md) records the schema checks, and the [combined Week 1 findings](results/feasibility/week1_findings.md) record settings, results, and limitations. The remaining notebooks are planned. Each notebook should call reusable code from the `router` package inside `src/` (for example, `from router.decoders import summarize_outcomes`):
+The first notebook, `00_dataset_and_feasibility.ipynb`, is complete. Its saved Colab run covers the pinned 50,000-row train sample, schema checks, four decoder outcomes, five rates, and the rescue-only routing target. All 16 code cells ran in order with no error outputs. The [data dictionary](docs/DATA_DICTIONARY.md) records the schema checks, and the [combined Week 1 findings](results/feasibility/week1_findings.md) record settings, results, and limitations. Notebooks 01 and 02 contain Week 2 work outlines, while later notebooks remain planned. Each notebook should call reusable code from the `router` package inside `src/` (for example, `from router.decoders import summarize_outcomes`):
 
 | Notebook | Responsibility |
 | --- | --- |
 | `00_dataset_and_feasibility.ipynb` | Week 1, complete: inspect the train sample and schema; calculate decoder outcomes, rates, and the rescue-only routing target. |
-| `01_feature_engineering.ipynb` | Validate detection-event count and density, round activity, active rounds, maximum round activity, distance, rounds, and basis. Mask padded syndrome positions with `round_widths`. |
-| `02_classical_routers.ipynb` | Try a Dummy baseline, Logistic Regression, Random Forest, and XGBoost on the same routing target. |
+| [`01_feature_engineering.ipynb`](notebooks/01_feature_engineering.ipynb) (scaffold) | Validate detection-event count and density, round activity, active rounds, maximum round activity, distance, rounds, and basis. Mask padded syndrome positions with `round_widths`. |
+| [`02_classical_routers.ipynb`](notebooks/02_classical_routers.ipynb) (scaffold) | Try a Dummy baseline, Logistic Regression, Random Forest, and XGBoost on the same routing target. |
 | `03_qml_router.ipynb` | Explore a VQC/QML routing candidate using compact features for the same routing objective. |
 | `04_routing_tradeoff.ipynb` | Sweep thresholds on validation data and plot LER against correlated-matching usage. |
 | `05_final_evaluation.ipynb` | Evaluate the chosen router once on untouched test samples against always-PyMatching, always-correlated-matching, and oracle routing. |
@@ -55,6 +55,8 @@ pip install -e .
 ```
 
 The current Week 1 notebook instead downloads the required `router` files and installs its small runtime dependency set. Both setups call the same package functions.
+
+Week 2 covers feature engineering and the first classical routers in notebooks 01 and 02. Their scaffolds, test plans, and empty results-note templates are ready; no Week 2 results have been recorded. The [Week 2 task guide](docs/WEEK_2_TASK_GUIDE.md) divides that work into four tasks, and the [Week 2 schedule](docs/WEEK_2_SCHEDULE.md) gives seven-day checkpoints.
 
 Install optional QML dependencies only when working on the VQC notebook: `pip install -e '.[qml]'`. Keep notebook code focused on exploration and presentation; add reusable logic to the `router` package inside `src/`.
 
@@ -73,8 +75,8 @@ selective-decoder-routing/
 │   └── models.yaml
 ├── notebooks/
 │   ├── 00_dataset_and_feasibility.ipynb  (complete)
-│   ├── 01_feature_engineering.ipynb      (planned)
-│   ├── 02_classical_routers.ipynb        (planned)
+│   ├── 01_feature_engineering.ipynb      (scaffold)
+│   ├── 02_classical_routers.ipynb        (scaffold)
 │   ├── 03_qml_router.ipynb               (planned)
 │   ├── 04_routing_tradeoff.ipynb         (planned)
 │   └── 05_final_evaluation.ipynb         (planned)
@@ -84,9 +86,9 @@ selective-decoder-routing/
 │       ├── data.py            # dataset and development sampling
 │       ├── decoders.py        # decoder outcome accounting
 │       ├── labels.py          # positive routing target
-│       ├── features.py        # leakage-safe feature planning
+│       ├── features.py        # Week 2 extractor scaffold
 │       ├── routing.py         # threshold and decoder selection
-│       ├── evaluate.py        # future system metrics
+│       ├── evaluate.py        # Week 2 validation-metric scaffold
 │       ├── plots.py           # future shared plots
 │       └── models/
 │           ├── __init__.py
@@ -113,10 +115,11 @@ selective-decoder-routing/
 │   └── README.md
 └── tests/
     ├── test_data.py
-    ├── test_features.py      (planned)
+    ├── test_features.py      (scaffold; no tests yet)
+    ├── test_classical.py     (scaffold; no tests yet)
     └── test_routing.py
 ```
 
 Entries marked `(planned)` are listed for the intended workflow and have not been created. Local artifacts are ignored by Git.
 
-The Python package, configuration templates, and protocol are the starting point for the project. The original Day 1 feasibility assignment is planned as a one-week task; see the [seven-day schedule](docs/WEEK_1_SCHEDULE.md) and [task guide](docs/WEEK_1_TASK_GUIDE.md). Later work covers feature engineering and candidate routers, validation threshold selection, and one final test-set evaluation. See also the [project guide](docs/PROJECT_GUIDE.md), [data dictionary](docs/DATA_DICTIONARY.md), and [experiment protocol](docs/EXPERIMENT_PROTOCOL.md).
+The Python package, configuration templates, and protocol are the starting point for the project. Week 1's feasibility work is documented in its [schedule](docs/WEEK_1_SCHEDULE.md) and [task guide](docs/WEEK_1_TASK_GUIDE.md). Week 2 plans feature engineering and classical routers; later work covers validation threshold selection and one final test-set evaluation. See also the [project guide](docs/PROJECT_GUIDE.md), [data dictionary](docs/DATA_DICTIONARY.md), and [experiment protocol](docs/EXPERIMENT_PROTOCOL.md).

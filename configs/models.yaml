@@ -1,4 +1,6 @@
-# Candidate routers for the same rescue target. Tune settings on validation only.
+# Candidate routers for the same rescue target. Fit all preprocessing and models
+# on train only, with explicit feature columns and no passthrough. Use validation
+# for comparison and documented tuning; keep test closed.
 logistic_regression:
   enabled: true
 random_forest:

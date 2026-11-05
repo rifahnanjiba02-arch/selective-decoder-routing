@@ -1,5 +1,7 @@
-# Candidate inputs only. Never include label, pymatching, correlated_matching,
-# decoder correctness, or the routing target as model features.
+# Candidate inputs only. Build X from syndrome, round_widths, time_steps,
+# width, distance, rounds, and basis; never copy whole dataset rows into X.
+# Never include label, pymatching, correlated_matching, decoder correctness,
+# routing target, or experiment identifier as model features.
 compact_features:
   - detection_event_count
   - event_density
