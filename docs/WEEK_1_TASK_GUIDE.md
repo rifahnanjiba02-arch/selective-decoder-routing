@@ -13,9 +13,9 @@ Each dataset row is one surface-code shot with a true logical `label` and two st
 
 This is a **feasibility analysis**. It does not train a routing model or measure decoder runtime savings.
 
-## Progress snapshot — 3 November 2026
+## Progress snapshot — 5 November 2026
 
-Tasks 1 and 2 are merged into `main` (pull requests #1 and #2). The notebook has saved Colab outputs for Task 1's checks on the pinned 50,000-row train sample; schema findings are in [the data dictionary](DATA_DICTIONARY.md). Task 2's outcome calculations were verified separately on that sample and recorded in [the Task 2 findings](../results/feasibility/task2_outcomes.md). Task 3 and the final notebook presentation remain.
+Tasks 1 and 2 are merged into `main` (pull requests #1 and #2). Task 3 is verified on the `task-3` branch and has not been merged into `main`. The notebook has saved Colab outputs for Task 1's checks on the pinned 50,000-row train sample; schema findings are in [the data dictionary](DATA_DICTIONARY.md). Task 2's outcome calculations were verified separately on that sample and recorded in [the Task 2 findings](../results/feasibility/task2_outcomes.md). The final notebook presentation remains.
 
 | Work | Status now | Continue with |
 | --- | --- | --- |
@@ -24,7 +24,7 @@ Tasks 1 and 2 are merged into `main` (pull requests #1 and #2). The notebook has
 | Sample settings | **Recorded for both runs:** dataset revision `9c51b27ffc51ed7ff3ef3a72167ebf4862d1f2f3`, train sample size 50,000, and seed 42. The repository config still leaves `dataset_revision: null`; both runs used a temporary pinned config. | Keep the exact revision in the final notebook and report. |
 | Dataset inspection | **Done on the sampled train rows:** saved Colab outputs and `docs/DATA_DICTIONARY.md` record all 12 field types and missing counts, six relevant value sets, and syndrome/`round_widths` shape and padding checks. All required shape checks had zero failing rows. Validation/test sizes are cited from the dataset card. | Reference the checked schema in the final presentation. |
 | Decoder outcomes | **Done:** `outcome_masks()` and `summarize_outcomes()` passed manual tests and produced four counts and five rates on the pinned train sample. The counts sum to 50,000; results are in [the Task 2 findings](../results/feasibility/task2_outcomes.md). | Present the verified results in the notebook. |
-| Routing target | **Task 3 pending:** `route_to_correlated()` and a manual test exist. A sample check matched the rescue mask, but the Task 3 review and presentation remain. | Verify the target rule and tests as specified below. |
+| Routing target | **Task 3 done on `task-3`:** `route_to_correlated()` returns the rescue mask. Hand-checked tests cover all four outcomes, both logical-label values, disagreement, mask coverage, and unequal input lengths. All 15 repository tests pass. | Present the verified target in the Task 4 notebook. |
 | Colab presentation | **Task 1 complete:** `notebooks/00_dataset_and_feasibility.ipynb` has saved setup, tests, train loading, preview, and inspection outputs. Decoder-result sections are still headings only. | Fill the decoder and target sections, then complete the combined findings note. |
 
 The saved Colab outputs establish the sampled-data checks; the separate Task 2 run establishes the decoder counts and rates. The notebook still needs saved decoder results. Hugging Face downloaded/prepared validation and test files internally during the Task 1 run; only train rows were selected for analysis.
@@ -110,7 +110,7 @@ oracle_ler              = both_wrong / N
 | PM correct + CM wrong | 0 |
 | PM wrong + CM wrong | 0 |
 
-The function currently returns `True` for rescue and `False` for every other row; these correspond to `1` and `0`. Decoder disagreement alone is **not** the positive target.
+The verified function returns `True` for rescue and `False` for every other row; these correspond to `1` and `0`. Decoder disagreement alone is **not** the positive target.
 
 Use hand-checked examples in the tests. One useful six-row case is already in `tests/test_routing.py`:
 
@@ -120,9 +120,11 @@ PM    = [0, 1, 0, 1, 1, 0]
 CM    = [0, 0, 1, 1, 1, 0]
 ```
 
-Expected counts are `both_correct = 2`, `rescue = 1`, `harmful_switch = 1`, and `both_wrong = 2`. The routing target is `[0, 1, 0, 0, 0, 0]`; PM LER and CM LER are each `3/6`, rescue opportunity is `1/6`, decoder disagreement is `2/6`, and oracle LER is `2/6`. The tests should also confirm equal-length inputs and that the four masks cover every row without overlap. Run `make test` from the repository root.
+Expected counts are `both_correct = 2`, `rescue = 1`, `harmful_switch = 1`, and `both_wrong = 2`. The routing target is `[0, 1, 0, 0, 0, 0]`; PM LER and CM LER are each `3/6`, rescue opportunity is `1/6`, decoder disagreement is `2/6`, and oracle LER is `2/6`. The tests also confirm that unequal-length inputs are rejected and that the four masks cover every row without overlap. Run `make test` from the repository root where `make` is available.
 
 **Deliver:** verified `route_to_correlated()` and tests for both correct, rescue, harmful switch, and both wrong. The tests must confirm the routing target and Task 2's metric formulas on a tiny manual dataset.
+
+**Verified result:** The existing function returns `True` only for rescue, corresponding to `y_router = 1`. Commit `1054fa1` added hand-checked tests without changing the function. On 5 November 2026, the Makefile's equivalent commands in PowerShell (`$env:PYTHONPATH='src'; python -m unittest discover -s tests`) passed all 15 tests; `make` was unavailable in that environment. Task 3 is complete on the `task-3` branch.
 
 **Study:** the [experiment protocol](EXPERIMENT_PROTOCOL.md), basic test assertions, and data leakage.
 
@@ -172,7 +174,7 @@ Save a compact findings note in `results/feasibility/` with the run settings, sc
 - [x] The pinned train split yielded 50,000 sampled rows; a repeat matched all fields of every row in order.
 - [x] Split metadata, columns, key values, missingness, and shape/padding findings are recorded for the sampled train rows.
 - [x] The four outcome counts sum to `N`, and all five rates use the correct denominator.
-- [ ] `y_router` is 1 only for PM wrong + CM correct; manual tests and `make test` pass.
+- [x] `y_router` is 1 only for PM wrong + CM correct; manual tests and the repository unittest suite pass.
 - [ ] The Colab notebook runs top to bottom and matches the verified functions.
 - [ ] The final combined findings note records settings, schema, and results without shot-level data; a Task 2-only note is saved.
 - [ ] No test rows informed development, and no true label or stored decoder prediction is used as a router input feature.
