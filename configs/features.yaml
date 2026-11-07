@@ -12,3 +12,9 @@ compact_features:
   - rounds
   - basis
 padding_mask: round_widths  # Exclude padded syndrome slots from all counts and densities.
+# Fixed length of activity_across_rounds: rounds goes up to 25 in the Week 1
+# train sample and time_steps = rounds + 1, so 26. Shorter rows are zero-padded
+# at the end; longer rows raise an error (no truncation).
+max_time_steps: 26
+# Only these source fields are read by src/router/features.py.
+source_fields: [syndrome, round_widths, time_steps, width, distance, rounds, basis]
