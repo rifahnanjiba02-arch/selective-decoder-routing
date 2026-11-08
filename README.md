@@ -56,7 +56,7 @@ pip install -e .
 
 The current Week 1 notebook instead downloads the required `router` files and installs its small runtime dependency set. Both setups call the same package functions.
 
-Week 2 covers feature engineering and the first classical routers in notebooks 01 and 02. Their scaffolds, test plans, and empty results-note templates are ready; no Week 2 results have been recorded. The [Week 2 task guide](docs/WEEK_2_TASK_GUIDE.md) divides that work into four tasks, and the [Week 2 schedule](docs/WEEK_2_SCHEDULE.md) gives seven-day checkpoints.
+Week 2 covers feature engineering and the first classical routers in notebooks 01 and 02. Task 1's feature extractor and offline tests are complete on the `task-1` branch; the notebooks and results notes remain scaffolds, with no Week 2 sample results recorded. The [Week 2 task guide](docs/WEEK_2_TASK_GUIDE.md) divides that work into four tasks, and the [Week 2 schedule](docs/WEEK_2_SCHEDULE.md) gives seven-day checkpoints.
 
 Install optional QML dependencies only when working on the VQC notebook: `pip install -e '.[qml]'`. Keep notebook code focused on exploration and presentation; add reusable logic to the `router` package inside `src/`.
 
@@ -86,7 +86,7 @@ selective-decoder-routing/
 │       ├── data.py            # dataset and development sampling
 │       ├── decoders.py        # decoder outcome accounting
 │       ├── labels.py          # positive routing target
-│       ├── features.py        # Week 2 extractor scaffold
+│       ├── features.py        # Week 2 feature extraction
 │       ├── routing.py         # threshold and decoder selection
 │       ├── evaluate.py        # Week 2 validation-metric scaffold
 │       ├── plots.py           # future shared plots
@@ -115,7 +115,7 @@ selective-decoder-routing/
 │   └── README.md
 └── tests/
     ├── test_data.py
-    ├── test_features.py      (scaffold; no tests yet)
+    ├── test_features.py      # hand-checked feature tests
     ├── test_classical.py     (scaffold; no tests yet)
     └── test_routing.py
 ```
