@@ -142,6 +142,23 @@ class FeatureTests(unittest.TestCase):
             with self.subTest(name), self.assertRaises(ValueError):
                 extract_features(as_columns(row))
 
+    def test_experiment_metadata_must_be_consistent_and_positive(self):
+        cases = {
+            "wrong time_steps for rounds": (
+                make_row(rounds=1), r"time_steps must equal rounds \+ 1"),
+            "zero rounds": (
+                make_row(rounds=0), "distance and rounds must be positive"),
+            "negative rounds": (
+                make_row(rounds=-1), "distance and rounds must be positive"),
+            "zero distance": (
+                make_row(distance=0), "distance and rounds must be positive"),
+            "negative distance": (
+                make_row(distance=-3), "distance and rounds must be positive"),
+        }
+        for name, (row, message) in cases.items():
+            with self.subTest(name), self.assertRaisesRegex(ValueError, message):
+                extract_features(as_columns(row))
+
     def test_missing_field_and_ragged_columns_raise(self):
         cols = as_columns(make_row())
         del cols["basis"]

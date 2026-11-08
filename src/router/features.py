@@ -75,6 +75,10 @@ def row_features(syndrome, round_widths, time_steps, width, distance, rounds, ba
     rounds = _as_int(rounds, "rounds")
     if time_steps < 1 or width < 1:
         raise ValueError("time_steps and width must be positive")
+    if distance < 1 or rounds < 1:
+        raise ValueError("distance and rounds must be positive")
+    if time_steps != rounds + 1:
+        raise ValueError("time_steps must equal rounds + 1")
     if time_steps > MAX_TIME_STEPS:
         raise ValueError(
             f"time_steps={time_steps} is longer than the fixed activity length "

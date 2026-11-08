@@ -18,6 +18,8 @@ Use the Week 1 dataset revision `9c51b27ffc51ed7ff3ef3a72167ebf4862d1f2f3` as th
 | 3. Build classical routers | `src/router/models/classical.py`, `configs/models.yaml`, `tests/test_classical.py` | Dummy, Logistic Regression, Random Forest, and XGBoost trained on the same target. |
 | 4. Compare routers in notebook 02 | `notebooks/02_classical_routers.ipynb`, `src/router/evaluate.py`, `results/model_scores/week2_classical.md` | Saved validation comparison, system checks, and a compact findings note. |
 
+**Progress — 8 November 2026:** Task 1's extractor and hand-checked offline tests are complete on the `task-1` branch. Task 2's train/validation notebook run and Tasks 3–4 remain pending.
+
 ## Task 1 — Build safe features
 
 **What to do:** implement reusable feature extraction in `src/router/features.py`. A `syndrome` row is flattened; reshape it with `time_steps` and `width`. At time step `t`, only the first `round_widths[t]` positions are real. Ignore the padded positions even if a test row deliberately puts a `1` there.
@@ -38,6 +40,8 @@ Choose the fixed length for `activity_across_rounds` from training data or a doc
 **Hand checks:** include a tiny row with real and padded `1` values, a row with no events, and rows with different widths and time steps. Assert the expected event count, density, activity, and exact output column order. Change only `label`, decoder predictions, or `experiment` on a copy of a row and assert that `X` is unchanged. Assert that no forbidden field appears in the feature output.
 
 **Deliver:** one deterministic feature extractor with named numeric activity columns and a `basis` category, a clear definition for every feature, and passing tests. Use the existing `router` package; do not copy feature calculations into notebooks.
+
+**Verified result:** `extract_features()` reads only the seven allowlisted source fields and returns 33 stable columns. It masks padding, defines zero-position density as 0, pads activity to 26 time steps without truncation, and rejects invalid shapes, nonpositive `distance`/`rounds`, or `time_steps != rounds + 1`. Fifteen feature tests pass, including forbidden-field mutation and metadata checks; the full offline suite has 30 passing tests. Real train/validation feature checks belong to Task 2.
 
 ## Task 2 — Verify features in notebook 01
 
@@ -71,7 +75,7 @@ The 0.5 result is a diagnostic, not the final operating threshold. The full thre
 
 ## Complete by the end of Day 7
 
-- [ ] Feature code masks padding, returns stable named columns, and passes hand-checked tests.
+- [x] Feature code masks padding, returns stable named columns, and passes hand-checked tests.
 - [ ] Notebook 01 runs on pinned train and validation samples and saves feature checks.
 - [ ] All four classical candidates train on the same train target and produce aligned validation scores.
 - [ ] Notebook 02 reports target-class and system metrics on the same validation rows.
