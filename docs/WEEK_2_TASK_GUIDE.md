@@ -1,6 +1,6 @@
 # Week 2 task guide: features and classical routers
 
-Week 2 builds on the [completed Week 1 analysis](../results/feasibility/week1_findings.md). The goal is to turn each shot's syndrome into a small, safe feature row and compare simple classical models that predict whether correlated matching would rescue PyMatching. [Notebook 01](../notebooks/01_feature_engineering.ipynb) is prepared for a Colab train/validation run; its outputs are pending. [Notebook 02](../notebooks/02_classical_routers.ipynb) and the classical-model files remain scaffolds. See the [seven-day schedule](WEEK_2_SCHEDULE.md).
+Week 2 builds on the [completed Week 1 analysis](../results/feasibility/week1_findings.md). The goal is to turn each shot's syndrome into a small, safe feature row and compare simple classical models that predict whether correlated matching would rescue PyMatching. [Notebook 01](../notebooks/01_feature_engineering.ipynb) has saved train/validation feature checks. [Notebook 02](../notebooks/02_classical_routers.ipynb) and the classical-model files remain scaffolds. See the [seven-day schedule](WEEK_2_SCHEDULE.md).
 
 ## The two things a model needs
 
@@ -18,7 +18,7 @@ Use the Week 1 dataset revision `9c51b27ffc51ed7ff3ef3a72167ebf4862d1f2f3` as th
 | 3. Build classical routers | `src/router/models/classical.py`, `configs/models.yaml`, `tests/test_classical.py` | Dummy, Logistic Regression, Random Forest, and XGBoost trained on the same target. |
 | 4. Compare routers in notebook 02 | `notebooks/02_classical_routers.ipynb`, `src/router/evaluate.py`, `results/model_scores/week2_classical.md` | Saved validation comparison, system checks, and a compact findings note. |
 
-**Progress — 8 November 2026:** Task 1's extractor and hand-checked offline tests are complete and merged. Task 2's notebook cells and findings template are prepared on `week2-task2-feature-checks`; the Colab run and observed train/validation findings remain pending. Tasks 3–4 remain pending.
+**Progress — 8 November 2026:** Tasks 1 and 2 are complete. Notebook 01's saved Colab run checked 50,000 train and 10,000 validation rows with no failed feature assertions; aggregate findings are in [the feature note](../results/tables/week2_feature_checks.md). Tasks 3–4 remain pending.
 
 ## Task 1 — Build safe features
 
@@ -51,6 +51,8 @@ Keep target construction separate from feature extraction. If any encoding or sc
 
 **Deliver:** a notebook that runs top to bottom in Colab with saved outputs, plus `results/tables/week2_feature_checks.md` containing the feature definitions, sample settings, aggregate checks, and any unresolved schema questions.
 
+**Verified result:** All nine code cells have execution counts and no error outputs. Both published development samples produced the configured 33 columns, finite numeric values, no missing feature values, and `X`/`Z` basis categories. Independent masking checks passed on every sampled row; the synthetic padding, zero-event, and forbidden-field mutation checks passed. No test rows were selected. See the [aggregate findings](../results/tables/week2_feature_checks.md).
+
 ## Task 3 — Build classical routers
 
 **What to do:** implement reusable model setup and fitting in `src/router/models/classical.py`. Use one feature matrix from Task 1 and the same rescue target for every model. Fit on train only. Compare a `DummyClassifier` baseline, Logistic Regression, Random Forest, and XGBoost as listed in [the model config](../configs/models.yaml).
@@ -76,7 +78,7 @@ The 0.5 result is a diagnostic, not the final operating threshold. The full thre
 ## Complete by the end of Day 7
 
 - [x] Feature code masks padding, returns stable named columns, and passes hand-checked tests.
-- [ ] Notebook 01 runs on pinned train and validation samples and saves feature checks.
+- [x] Notebook 01 runs on pinned train and validation samples and saves feature checks.
 - [ ] All four classical candidates train on the same train target and produce aligned validation scores.
 - [ ] Notebook 02 reports target-class and system metrics on the same validation rows.
 - [ ] Both compact findings notes record revision, sample settings, feature definitions, model settings, and limitations.

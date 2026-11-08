@@ -1,21 +1,23 @@
 # Week 2 feature checks
 
-**Status: notebook prepared; Colab run and observed results pending.** [Notebook 01](../../notebooks/01_feature_engineering.ipynb) has code for the full train and validation feature audit, but its cells have not been run. Fill the observed fields below from its saved aggregate outputs; do not treat planned sample sizes as measured counts.
+**Status: complete.** [Notebook 01](../../notebooks/01_feature_engineering.ipynb) has execution counts for all nine code cells and saved aggregate outputs, with no error outputs. The 50,000 train and 10,000 validation shots passed the feature audit on 8 November 2026. These are feature checks, not router performance results.
 
 ## Run settings
 
 | Item | Prepared value |
 | --- | --- |
 | Repository source commit | `58b14a3afe79d214ab0c302c79ce80a843624a4b` (Task 1 extractor and loader) |
+| Saved notebook run commit | `fb9590943d58dc54ae7ec309cc55e30f55d1fed9` |
 | Dataset | `Bauxitiego/surface-code-syndromes` |
 | Dataset revision | `9c51b27ffc51ed7ff3ef3a72167ebf4862d1f2f3` |
 | Published splits requested | `train`, `validation` independently; no `test` request |
-| Planned samples | 50,000 train; 10,000 validation |
+| Published split sizes observed | 4,550,000 train; 650,000 validation |
+| Samples checked | 50,000 train; 10,000 validation |
 | Sampling seed | 42 for each named split; published split seed 20260806 |
 | Feature configuration | `configs/features.yaml` at the source commit; `max_time_steps: 26` |
-| Package versions | Pending Colab output |
+| Package versions | `datasets` 4.8.5, `numpy` 2.4.6, `pandas` 2.2.3, `PyYAML` 6.0.3 |
 
-The source commit pins reusable code and configuration. When this notebook is run from a later code revision, update the source pin and this note together.
+The source commit pins reusable code and configuration. The dataset loader requested only train and validation rows; the Hugging Face builder also downloaded/prepared test files internally, but the notebook did not select or analyze test rows. When this notebook is rerun from a later code revision, update the source pin and this note together.
 
 ## Feature definitions and column order
 
@@ -35,21 +37,42 @@ Exact 33-column order: `detection_event_count`, `event_density`, `activity_round
 
 No scaling or category encoding is fitted in notebook 01. The label, stored decoder predictions, decoder correctness, routing target, and experiment identifier are outside `X` and remain reserved for target construction or evaluation in later work.
 
-## Checks to record after the Colab run
+## Saved checks
 
 | Check | Train result | Validation result |
 | --- | --- | --- |
-| Selected rows equal planned size | Pending | Pending |
-| Exact configured feature names and order | Pending | Pending |
-| Finite numeric values and no missing feature values | Pending | Pending |
-| Observed `basis` categories within `X`, `Z` | Pending | Pending |
-| Event count, density, and activity agree with independent padding mask | Pending | Pending |
-| Padded positions; nonzero padded positions | Pending | Pending |
-| Aggregate min, median, mean, max for six summary features | Pending | Pending |
-| Basis counts | Pending | Pending |
+| Selected rows equal planned size | 50,000 / 50,000 | 10,000 / 10,000 |
+| Exact configured feature names and order | Passed; 33 columns | Passed; 33 columns |
+| Nonfinite numeric values; missing feature values | 0; 0 | 0; 0 |
+| Observed `basis` categories | `X`, `Z` | `X`, `Z` |
+| Event count, density, and activity agree with independent padding mask | Passed on all 50,000 rows | Passed on all 10,000 rows |
+| Padded positions; nonzero padded positions | 514,200; 0 | 103,552; 0 |
+| Activity sum and other feature identity checks | Passed | Passed |
 
-The notebook also checks the hand-calculated padded-1, all-zero, and zero-real-position examples; verifies that changing only forbidden fields leaves features identical; and asserts that only `train` and `validation` were requested. The Task 1 offline tests already cover these synthetic cases, but the notebook's real-data checks are pending.
+The hand-calculated padded-1, all-zero, and zero-real-position examples passed. Changing only label, stored decoder predictions, experiment ID, and other forbidden fields left the synthetic feature row unchanged. The notebook checked that no forbidden field was in `X` and that only `train` and `validation` were requested. No target, decoder prediction, or experiment identifier was used as a feature.
 
-## Findings and unresolved questions
+## Aggregate feature summaries
 
-No train or validation feature summaries have been measured for Task 2 yet. After running notebook 01, paste only its aggregate outputs here, record any failed assertion or new schema question, and save the executed notebook. Do not commit shot-level rows, syndromes, or feature tables.
+| Split | Feature | Min | Median | Mean | Max |
+| --- | --- | ---: | ---: | ---: | ---: |
+| Train | Detection event count | 0 | 16 | 21.098880 | 189 |
+| Train | Event density | 0 | 0.133333 | 0.133045 | 0.625 |
+| Train | Active rounds | 0 | 8 | 8.621060 | 26 |
+| Train | Maximum round activity | 0 | 4 | 3.879480 | 16 |
+| Train | Distance | 3 | 3 | 3.395480 | 5 |
+| Train | Rounds | 1 | 13 | 12.992080 | 25 |
+| Validation | Detection event count | 0 | 16 | 21.387800 | 146 |
+| Validation | Event density | 0 | 0.134615 | 0.133554 | 0.625 |
+| Validation | Active rounds | 0 | 8 | 8.671600 | 26 |
+| Validation | Maximum round activity | 0 | 4 | 3.906700 | 16 |
+| Validation | Distance | 3 | 3 | 3.403400 | 5 |
+| Validation | Rounds | 1 | 13 | 13.029600 | 25 |
+
+| Split | Basis X | Basis Z | Total |
+| --- | ---: | ---: | ---: |
+| Train | 25,094 | 24,906 | 50,000 |
+| Validation | 5,068 | 4,932 | 10,000 |
+
+## Findings and limitations
+
+All recorded checks passed; no new schema question arose in these samples. The observed validation ranges fit the training-derived 26-step activity representation. This within-experiment train/validation audit does not establish performance on unseen experiments or on the untouched test split. No shot-level rows, syndromes, or generated feature tables were committed.
