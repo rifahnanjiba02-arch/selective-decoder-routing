@@ -1,6 +1,6 @@
 # Week 2 task guide: features and classical routers
 
-Week 2 builds on the [completed Week 1 analysis](../results/feasibility/week1_findings.md). The goal is to turn each shot's syndrome into a small, safe feature row and compare simple classical models that predict whether correlated matching would rescue PyMatching. [Notebook 01](../notebooks/01_feature_engineering.ipynb) and [notebook 02](../notebooks/02_classical_routers.ipynb) now contain work outlines only; neither analysis is implemented yet. The test files and results notes are also scaffolds. See the [seven-day schedule](WEEK_2_SCHEDULE.md).
+Week 2 builds on the [completed Week 1 analysis](../results/feasibility/week1_findings.md). The goal is to turn each shot's syndrome into a small, safe feature row and compare simple classical models that predict whether correlated matching would rescue PyMatching. [Notebook 01](../notebooks/01_feature_engineering.ipynb) is prepared for a Colab train/validation run; its outputs are pending. [Notebook 02](../notebooks/02_classical_routers.ipynb) and the classical-model files remain scaffolds. See the [seven-day schedule](WEEK_2_SCHEDULE.md).
 
 ## The two things a model needs
 
@@ -18,7 +18,7 @@ Use the Week 1 dataset revision `9c51b27ffc51ed7ff3ef3a72167ebf4862d1f2f3` as th
 | 3. Build classical routers | `src/router/models/classical.py`, `configs/models.yaml`, `tests/test_classical.py` | Dummy, Logistic Regression, Random Forest, and XGBoost trained on the same target. |
 | 4. Compare routers in notebook 02 | `notebooks/02_classical_routers.ipynb`, `src/router/evaluate.py`, `results/model_scores/week2_classical.md` | Saved validation comparison, system checks, and a compact findings note. |
 
-**Progress — 8 November 2026:** Task 1's extractor and hand-checked offline tests are complete on the `task-1` branch. Task 2's train/validation notebook run and Tasks 3–4 remain pending.
+**Progress — 8 November 2026:** Task 1's extractor and hand-checked offline tests are complete and merged. Task 2's notebook cells and findings template are prepared on `week2-task2-feature-checks`; the Colab run and observed train/validation findings remain pending. Tasks 3–4 remain pending.
 
 ## Task 1 — Build safe features
 
