@@ -40,7 +40,7 @@ The first notebook, `00_dataset_and_feasibility.ipynb`, is complete. Its saved C
 | Notebook | Responsibility |
 | --- | --- |
 | `00_dataset_and_feasibility.ipynb` | Week 1, complete: inspect the train sample and schema; calculate decoder outcomes, rates, and the rescue-only routing target. |
-| [`01_feature_engineering.ipynb`](notebooks/01_feature_engineering.ipynb) (scaffold) | Validate detection-event count and density, round activity, active rounds, maximum round activity, distance, rounds, and basis. Mask padded syndrome positions with `round_widths`. |
+| [`01_feature_engineering.ipynb`](notebooks/01_feature_engineering.ipynb) (complete) | Saved train and validation feature checks for detection-event count and density, round activity, active rounds, maximum round activity, distance, rounds, and basis. Padded positions are masked with `round_widths`. |
 | [`02_classical_routers.ipynb`](notebooks/02_classical_routers.ipynb) (scaffold) | Try a Dummy baseline, Logistic Regression, Random Forest, and XGBoost on the same routing target. |
 | `03_qml_router.ipynb` | Explore a VQC/QML routing candidate using compact features for the same routing objective. |
 | `04_routing_tradeoff.ipynb` | Sweep thresholds on validation data and plot LER against correlated-matching usage. |
@@ -56,7 +56,7 @@ pip install -e .
 
 The current Week 1 notebook instead downloads the required `router` files and installs its small runtime dependency set. Both setups call the same package functions.
 
-Week 2 covers feature engineering and the first classical routers in notebooks 01 and 02. Task 1's feature extractor and offline tests are complete on the `task-1` branch; the notebooks and results notes remain scaffolds, with no Week 2 sample results recorded. The [Week 2 task guide](docs/WEEK_2_TASK_GUIDE.md) divides that work into four tasks, and the [Week 2 schedule](docs/WEEK_2_SCHEDULE.md) gives seven-day checkpoints.
+Week 2 covers feature engineering and the first classical routers in notebooks 01 and 02. Task 1's feature extractor and offline tests are complete and merged. Notebook 01's saved Colab run and [feature note](results/tables/week2_feature_checks.md) complete Task 2: 50,000 train and 10,000 validation feature rows passed the configured schema, finite-value, padding-mask, and leakage-boundary checks. Notebook 02 remains a scaffold; no router has been trained yet. The [Week 2 task guide](docs/WEEK_2_TASK_GUIDE.md) divides that work into four tasks, and the [Week 2 schedule](docs/WEEK_2_SCHEDULE.md) gives seven-day checkpoints.
 
 Install optional QML dependencies only when working on the VQC notebook: `pip install -e '.[qml]'`. Keep notebook code focused on exploration and presentation; add reusable logic to the `router` package inside `src/`.
 
@@ -75,7 +75,7 @@ selective-decoder-routing/
 │   └── models.yaml
 ├── notebooks/
 │   ├── 00_dataset_and_feasibility.ipynb  (complete)
-│   ├── 01_feature_engineering.ipynb      (scaffold)
+│   ├── 01_feature_engineering.ipynb      (complete)
 │   ├── 02_classical_routers.ipynb        (scaffold)
 │   ├── 03_qml_router.ipynb               (planned)
 │   ├── 04_routing_tradeoff.ipynb         (planned)
