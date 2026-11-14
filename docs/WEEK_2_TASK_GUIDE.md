@@ -1,6 +1,6 @@
 # Week 2 task guide: features and classical routers
 
-Week 2 builds on the [completed Week 1 analysis](../results/feasibility/week1_findings.md). The goal is to turn each shot's syndrome into a small, safe feature row and compare simple classical models that predict whether correlated matching would rescue PyMatching. [Notebook 01](../notebooks/01_feature_engineering.ipynb) has saved train/validation feature checks. [Notebook 02](../notebooks/02_classical_routers.ipynb) and the classical-model files remain scaffolds. See the [seven-day schedule](WEEK_2_SCHEDULE.md).
+Week 2 builds on the [completed Week 1 analysis](../results/feasibility/week1_findings.md). The goal is to turn each shot's syndrome into a small, safe feature row and compare simple classical models that predict whether correlated matching would rescue PyMatching. [Notebook 01](../notebooks/01_feature_engineering.ipynb) has saved train/validation feature checks. The classical-model code and offline tests are complete; [notebook 02](../notebooks/02_classical_routers.ipynb) remains a scaffold for the published-sample comparison. See the [seven-day schedule](WEEK_2_SCHEDULE.md).
 
 ## The two things a model needs
 
@@ -18,7 +18,7 @@ Use the Week 1 dataset revision `9c51b27ffc51ed7ff3ef3a72167ebf4862d1f2f3` as th
 | 3. Build classical routers | `src/router/models/classical.py`, `configs/models.yaml`, `tests/test_classical.py` | Dummy, Logistic Regression, Random Forest, and XGBoost trained on the same target. |
 | 4. Compare routers in notebook 02 | `notebooks/02_classical_routers.ipynb`, `src/router/evaluate.py`, `results/model_scores/week2_classical.md` | Saved validation comparison, system checks, and a compact findings note. |
 
-**Progress — 8 November 2026:** Tasks 1 and 2 are complete. Notebook 01's saved Colab run checked 50,000 train and 10,000 validation rows with no failed feature assertions; aggregate findings are in [the feature note](../results/tables/week2_feature_checks.md). Tasks 3–4 remain pending.
+**Progress — 14 November 2026:** Tasks 1–3 are complete. Notebook 01's saved Colab run checked 50,000 train and 10,000 validation rows with no failed feature assertions; aggregate findings are in [the feature note](../results/tables/week2_feature_checks.md). Task 3's four pipelines and offline tests are merged. Task 4, the notebook 02 run and published-sample validation comparison, remains pending.
 
 ## Task 1 — Build safe features
 
@@ -63,6 +63,8 @@ Fit any imputer, scaler, one-hot encoder, feature selector, or probability calib
 
 **Deliver:** reproducible training and prediction functions, configuration for each candidate, and passing offline tests.
 
+**Verified result:** Dummy, Logistic Regression, Random Forest, and XGBoost pipelines use the Task 1 feature schema, train-only preprocessing, explicit columns with `remainder="drop"`, and recorded seeds and settings. Offline tests cover score range and order, forbidden and renamed target columns, pandas feature/target index alignment, validation-only values, and deterministic fitting. The local full suite passed with 59 tests and 22 subtests in a virtual environment. Published train/validation model scores belong to Task 4.
+
 ## Task 4 — Compare routers in notebook 02
 
 **What to do:** complete the `02_classical_routers.ipynb` scaffold. Reuse notebook 01's feature definitions and sampling settings. Call the Task 3 functions, train on train, and compare all four candidates on the same validation rows. Report the validation rescue prevalence and each model's average precision (AP), plus precision, recall, and F1 at the provisional 0.5 threshold. AP is useful because rescue rows are a minority; use and name `average_precision_score` from scikit-learn.
@@ -79,10 +81,11 @@ The 0.5 result is a diagnostic, not the final operating threshold. The full thre
 
 - [x] Feature code masks padding, returns stable named columns, and passes hand-checked tests.
 - [x] Notebook 01 runs on pinned train and validation samples and saves feature checks.
-- [ ] All four classical candidates train on the same train target and produce aligned validation scores.
+- [x] All four classical candidates fit and produce aligned scores on the same synthetic train/validation example with the Task 1 feature schema.
+- [ ] All four classical candidates train on the published train sample and produce aligned scores on the published validation sample.
 - [ ] Notebook 02 reports target-class and system metrics on the same validation rows.
 - [ ] Both compact findings notes record revision, sample settings, feature definitions, model settings, and limitations.
-- [ ] The feature allowlist and model preprocessing exclude target, decoder, and experiment fields; mutation and validation-only-value tests prove the boundary.
+- [x] The feature allowlist and model preprocessing exclude target, decoder, and experiment fields; mutation and validation-only-value tests prove the boundary offline.
 - [ ] No test rows guide development; no true label, stored decoder prediction, correctness flag, routing target, or experiment identifier enters `X`.
 
 For the full split and leakage rules, use the [experiment protocol](EXPERIMENT_PROTOCOL.md) and [data dictionary](DATA_DICTIONARY.md).

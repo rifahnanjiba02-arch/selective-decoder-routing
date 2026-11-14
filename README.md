@@ -2,7 +2,7 @@
 
 This research project studies **when to use correlated matching instead of PyMatching** on real hardware-derived surface-code syndrome data. A router sees allowed syndrome and experiment features, chooses one of two existing decoder predictions for each shot, and aims for **low logical error rate (LER) with less unnecessary correlated-matching use**. The router is a selector, not a quantum error-correction decoder.
 
-Logistic Regression, Random Forest, XGBoost, and a variational quantum classifier (VQC) are candidate routers for the **same routing objective**. This is not primarily an ML-versus-QML benchmark. The main system figure will be **LER versus correlated-matching usage** as the routing threshold changes. The current results are decoder-feasibility measurements on a training sample; no router has been trained or evaluated yet.
+Logistic Regression, Random Forest, XGBoost, and a variational quantum classifier (VQC) are candidate routers for the **same routing objective**. This is not primarily an ML-versus-QML benchmark. The main system figure will be **LER versus correlated-matching usage** as the routing threshold changes. Saved results cover decoder feasibility and feature checks. Classical routers have passed offline tests on synthetic data; no router has been trained or evaluated on the published dataset yet.
 
 The [Hugging Face dataset](https://huggingface.co/datasets/Bauxitiego/surface-code-syndromes) reformats [Google Quantum AI's original experimental data](https://zenodo.org/records/6804040). It includes train, validation, and test splits and stored per-shot decoder predictions. The full dataset is not kept in this repository.
 
@@ -35,7 +35,7 @@ The rescue opportunity is `PM wrong AND CM correct`. The **oracle LER** is the f
 
 ## Notebooks
 
-The first notebook, `00_dataset_and_feasibility.ipynb`, is complete. Its saved Colab run covers the pinned 50,000-row train sample, schema checks, four decoder outcomes, five rates, and the rescue-only routing target. All 16 code cells ran in order with no error outputs. The [data dictionary](docs/DATA_DICTIONARY.md) records the schema checks, and the [combined Week 1 findings](results/feasibility/week1_findings.md) record settings, results, and limitations. Notebooks 01 and 02 contain Week 2 work outlines, while later notebooks remain planned. Each notebook should call reusable code from the `router` package inside `src/` (for example, `from router.decoders import summarize_outcomes`):
+The first notebook, `00_dataset_and_feasibility.ipynb`, is complete. Its saved Colab run covers the pinned 50,000-row train sample, schema checks, four decoder outcomes, five rates, and the rescue-only routing target. All 16 code cells ran in order with no error outputs. The [data dictionary](docs/DATA_DICTIONARY.md) records the schema checks, and the [combined Week 1 findings](results/feasibility/week1_findings.md) record settings, results, and limitations. Notebook 01 is complete; notebook 02 is a Week 2 work outline. Later notebooks remain planned. Each notebook should call reusable code from the `router` package inside `src/` (for example, `from router.decoders import summarize_outcomes`):
 
 | Notebook | Responsibility |
 | --- | --- |
@@ -56,7 +56,7 @@ pip install -e .
 
 The current Week 1 notebook instead downloads the required `router` files and installs its small runtime dependency set. Both setups call the same package functions.
 
-Week 2 covers feature engineering and the first classical routers in notebooks 01 and 02. Task 1's feature extractor and offline tests are complete and merged. Notebook 01's saved Colab run and [feature note](results/tables/week2_feature_checks.md) complete Task 2: 50,000 train and 10,000 validation feature rows passed the configured schema, finite-value, padding-mask, and leakage-boundary checks. Notebook 02 remains a scaffold; no router has been trained yet. The [Week 2 task guide](docs/WEEK_2_TASK_GUIDE.md) divides that work into four tasks, and the [Week 2 schedule](docs/WEEK_2_SCHEDULE.md) gives seven-day checkpoints.
+Week 2 covers feature engineering and the first classical routers in notebooks 01 and 02. Tasks 1–3 are complete: the feature extractor and tests are merged; notebook 01's saved Colab run and [feature note](results/tables/week2_feature_checks.md) checked 50,000 train and 10,000 validation feature rows; and the four classical router pipelines, configuration, and offline tests are merged. Task 3 tests passed on synthetic data using the actual 33-column feature schema, with train-only preprocessing, a strict feature allowlist, and target-index checks. Task 4 remains: notebook 02 must train and compare the routers on the published train and validation samples. The [Week 2 task guide](docs/WEEK_2_TASK_GUIDE.md) divides that work into four tasks, and the [Week 2 schedule](docs/WEEK_2_SCHEDULE.md) gives seven-day checkpoints.
 
 Install optional QML dependencies only when working on the VQC notebook: `pip install -e '.[qml]'`. Keep notebook code focused on exploration and presentation; add reusable logic to the `router` package inside `src/`.
 
@@ -92,7 +92,7 @@ selective-decoder-routing/
 │       ├── plots.py           # future shared plots
 │       └── models/
 │           ├── __init__.py
-│           ├── classical.py
+│           ├── classical.py       # Week 2 classical router pipelines
 │           └── qml.py
 ├── results/
 │   ├── README.md
@@ -116,7 +116,7 @@ selective-decoder-routing/
 └── tests/
     ├── test_data.py
     ├── test_features.py      # hand-checked feature tests
-    ├── test_classical.py     (scaffold; no tests yet)
+    ├── test_classical.py     # offline classical router tests
     └── test_routing.py
 ```
 

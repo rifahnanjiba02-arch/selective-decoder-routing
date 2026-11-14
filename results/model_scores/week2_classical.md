@@ -1,6 +1,6 @@
 # Week 2 classical-router comparison
 
-**Status: scaffold — no Week 2 models have been trained or compared.** Complete this note from [notebook 02](../../notebooks/02_classical_routers.ipynb). Follow Tasks 3 and 4 in the [Week 2 guide](../../docs/WEEK_2_TASK_GUIDE.md).
+**Status: Task 3 model code and offline tests complete; published-sample training and comparison pending.** Complete this Task 4 note from [notebook 02](../../notebooks/02_classical_routers.ipynb). Follow the [Week 2 guide](../../docs/WEEK_2_TASK_GUIDE.md).
 
 ## Run settings to record
 
