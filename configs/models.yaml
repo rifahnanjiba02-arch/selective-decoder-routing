@@ -1,11 +1,36 @@
-# Candidate routers for the same rescue target. Fit all preprocessing and models
-# on train only, with explicit feature columns and no passthrough. Use validation
-# for comparison and documented tuning; keep test closed.
-logistic_regression:
-  enabled: true
-random_forest:
-  enabled: true
-xgboost:
-  enabled: true
-vqc:
-  enabled: false  # Optional QML dependencies; compact features first.
+# Week 2 Task 3: classical router candidates.
+# All models share one feature matrix (Task 1) and one target (y_router).
+# Fit on train only. Probabilities are NOT claimed to be calibrated.
+seed: 42
+categorical_columns: [basis]
+
+models:
+  dummy:
+    # "prior" -> constant score equal to the train rescue prevalence.
+    strategy: prior
+    scale_numeric: false
+  logistic_regression:
+    scale_numeric: true
+    C: 1.0
+    max_iter: 1000
+    class_weight: balanced
+    solver: lbfgs
+  random_forest:
+    scale_numeric: false
+    n_estimators: 300
+    max_depth: null
+    min_samples_leaf: 5
+    class_weight: balanced_subsample
+    n_jobs: -1
+  xgboost:
+    scale_numeric: false
+    n_estimators: 300
+    max_depth: 4
+    learning_rate: 0.1
+    subsample: 0.8
+    colsample_bytree: 0.8
+    reg_lambda: 1.0
+    # "auto" = (#negatives / #positives) computed from the train target only.
+    scale_pos_weight: auto
+    tree_method: hist
+    n_jobs: -1
