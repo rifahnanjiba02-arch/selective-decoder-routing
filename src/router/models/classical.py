@@ -29,6 +29,8 @@ from sklearn.linear_model import LogisticRegression
 from sklearn.pipeline import Pipeline
 from sklearn.preprocessing import OneHotEncoder, StandardScaler
 
+from router.features import FEATURE_COLUMNS
+
 MODEL_NAMES = ("dummy", "logistic_regression", "random_forest", "xgboost")
 
 # Must never be a column of X.
@@ -80,6 +82,9 @@ def check_allowed_columns(allowed_columns: Sequence[str]) -> list[str]:
     bad = sorted(set(allowed) & FORBIDDEN_COLUMNS)
     if bad:
         raise ValueError(f"forbidden fields in allowed_columns: {bad}")
+    unknown = sorted(set(allowed) - set(FEATURE_COLUMNS))
+    if unknown:
+        raise ValueError(f"columns outside the Task 1 feature schema: {unknown}")
     return allowed
 
 
@@ -101,12 +106,24 @@ def validate_features(X: pd.DataFrame, allowed_columns: Sequence[str]) -> pd.Dat
     return X.loc[:, allowed]
 
 
-def validate_target(y: Iterable, n_rows: int, require_both_classes: bool = True) -> np.ndarray:
+def validate_target(
+    y: Iterable,
+    n_rows: int,
+    require_both_classes: bool = True,
+    *,
+    feature_index: pd.Index | None = None,
+) -> np.ndarray:
+    """Validate binary targets; pandas Series must share X's ordered index.
+
+    Array targets are positional, so callers must construct them in X row order.
+    """
     arr = np.asarray(y)
     if arr.ndim != 1:
         raise ValueError("y must be one-dimensional")
     if len(arr) != n_rows:
         raise ValueError(f"X has {n_rows} rows but y has {len(arr)}")
+    if isinstance(y, pd.Series) and feature_index is not None and not y.index.equals(feature_index):
+        raise ValueError("X and y indexes must match in the same order")
     if not np.isin(arr, (0, 1)).all():
         raise ValueError("y must contain only 0/1")
     arr = arr.astype(int)
@@ -208,7 +225,7 @@ def fit_router(
 ) -> Pipeline:
     """Fit one candidate on TRAIN ONLY and return the fitted pipeline."""
     X = validate_features(X_train, allowed_columns)
-    y = validate_target(y_train, len(X))
+    y = validate_target(y_train, len(X), feature_index=X.index)
     pipe = build_pipeline(name, allowed_columns, y, config)
     pipe.fit(X, y)
     pipe.allowed_columns_ = list(allowed_columns)  # recorded for predict-time checks

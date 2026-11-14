@@ -4,23 +4,31 @@ import pandas as pd
 import pytest
 
 from router.models import classical as C
+from router.features import ACTIVITY_COLUMNS, FEATURE_COLUMNS
 
-ALLOWED = ["detection_event_count", "event_density", "activity_0", "activity_1",
-           "distance", "rounds", "basis"]
+ALLOWED = list(FEATURE_COLUMNS)
 
 
 def make_xy(n=300, seed=0):
     rng = np.random.default_rng(seed)
-    cnt = rng.integers(0, 20, n)
-    X = pd.DataFrame({
+    rounds = rng.choice([3, 5], n)
+    activity = np.zeros((n, len(ACTIVITY_COLUMNS)), dtype=int)
+    for i, count in enumerate(rounds + 1):
+        activity[i, :count] = rng.integers(0, 5, count)
+    cnt = activity.sum(axis=1)
+    data = {
         "detection_event_count": cnt,
-        "event_density": cnt / 40.0,
-        "activity_0": rng.integers(0, 5, n),
-        "activity_1": rng.integers(0, 5, n),
+        "event_density": cnt / (4 * (rounds + 1)),
+    }
+    data.update({name: activity[:, i] for i, name in enumerate(ACTIVITY_COLUMNS)})
+    data.update({
+        "active_rounds": (activity > 0).sum(axis=1),
+        "maximum_round_activity": activity.max(axis=1),
         "distance": rng.choice([3, 5], n),
-        "rounds": rng.choice([3, 5], n),
+        "rounds": rounds,
         "basis": rng.choice(["X", "Z"], n),
     })
+    X = pd.DataFrame(data)
     y = ((cnt > 12) & (rng.random(n) < 0.7)).astype(int)
     y[:3] = [1, 0, 1]  # guarantee both classes
     return X, y
@@ -55,6 +63,8 @@ def test_all_four_models_same_rows(cfg):
     pytest.importorskip("xgboost")
     Xtr, ytr = make_xy(300, 0)
     Xva, _ = make_xy(60, 1)
+    assert list(Xtr.columns) == list(FEATURE_COLUMNS)
+    assert list(Xva.columns) == list(FEATURE_COLUMNS)
     models = C.fit_all_routers(Xtr, ytr, ALLOWED, cfg)
     assert list(models) == list(C.MODEL_NAMES)
     scores = C.predict_all_routers(models, Xva)
@@ -89,6 +99,13 @@ def test_forbidden_in_allowlist_rejected(cfg):
     Xtr, ytr = make_xy()
     with pytest.raises(ValueError, match="forbidden"):
         C.fit_router("dummy", Xtr, ytr, ALLOWED + ["experiment"], cfg)
+
+
+def test_renamed_target_cannot_be_allowlisted(cfg):
+    Xtr, ytr = make_xy()
+    Xtr["label_copy"] = ytr
+    with pytest.raises(ValueError, match="Task 1 feature schema"):
+        C.fit_router("dummy", Xtr, ytr, ALLOWED + ["label_copy"], cfg)
 
 
 def test_unexpected_nonforbidden_column_never_reaches_model(cfg):
@@ -142,6 +159,15 @@ def test_target_validation(cfg):
         C.fit_router("dummy", Xtr, ytr + 1, ALLOWED, cfg)
     with pytest.raises(ValueError, match="both classes"):
         C.fit_router("dummy", Xtr, np.zeros(len(Xtr), int), ALLOWED, cfg)
+
+
+def test_pandas_target_index_must_match_feature_order(cfg):
+    Xtr, ytr = make_xy()
+    Xtr.index = np.arange(1000, 1000 + len(Xtr))
+    y_series = pd.Series(ytr, index=Xtr.index)
+    C.fit_router("dummy", Xtr, y_series, ALLOWED, cfg)
+    with pytest.raises(ValueError, match="indexes must match"):
+        C.fit_router("dummy", Xtr, y_series.iloc[::-1], ALLOWED, cfg)
 
 
 def test_deterministic_given_seed(cfg):
