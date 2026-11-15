@@ -1,17 +1,17 @@
 # Week 2 classical-router comparison
 
-**Status: Task 3 model code and offline tests complete; published-sample training and comparison pending.** Complete this Task 4 note from [notebook 02](../../notebooks/02_classical_routers.ipynb). Follow the [Week 2 guide](../../docs/WEEK_2_TASK_GUIDE.md).
+**Status: notebook 02 and reusable metric code prepared; published-sample run and results pending.** Complete this Task 4 note from [notebook 02](../../notebooks/02_classical_routers.ipynb) after its Colab run. Follow the [Week 2 guide](../../docs/WEEK_2_TASK_GUIDE.md). No validation result has been measured in this note.
 
 ## Run settings to record
 
 | Item | Recorded value |
 | --- | --- |
-| Repository commit | Pending |
-| Dataset revision and published splits | Pending |
-| Train and validation sample sizes and seed | Pending |
-| Feature note and column order | Pending |
-| Model versions, seeds, and hyperparameters | Pending |
-| Provisional routing threshold | 0.5; verify and label in notebook |
+| Repository commit | Pending publication and notebook run; record resolved `SOURCE_REF` commit. |
+| Dataset revision and published splits | Planned: `9c51b27ffc51ed7ff3ef3a72167ebf4862d1f2f3`; named `train` and `validation` only. Verify in run. |
+| Train and validation sample sizes and seed | Planned: 50,000 train, 10,000 validation, seed 42 independently for each split; published split seed 20260806. Verify in run. |
+| Feature note and column order | [Week 2 feature checks](../tables/week2_feature_checks.md); 33 columns in `FEATURE_COLUMNS` order, including 26 activity slots. Verify in run. |
+| Model versions, seeds, and hyperparameters | Seed 42; exact settings from `configs/models.yaml` printed by notebook; record installed package versions and resolved source commit after run. |
+| Provisional routing threshold | 0.5; diagnostic only. |
 
 ## Validation results to add
 
