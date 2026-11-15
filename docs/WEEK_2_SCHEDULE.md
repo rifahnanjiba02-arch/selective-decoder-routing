@@ -1,6 +1,6 @@
 # Week 2 schedule: feature engineering and classical routers
 
-Week 2 has four tasks: build safe features, verify them in notebook 01, build classical routers, and compare them in notebook 02. Tasks 1–3 are complete as of 14 November 2026; Task 4's published-sample notebook run remains pending. The [task guide](WEEK_2_TASK_GUIDE.md) gives the definitions and deliverables. Begin with the pinned Week 1 dataset revision, use train for fitting and validation for comparison, and leave test untouched.
+Week 2's four tasks are complete: build safe features, verify them in notebook 01, build classical routers, and compare them in notebook 02. Task 4 has saved published-sample validation results and a [findings note](../results/model_scores/week2_classical.md). All nine notebook 02 code cells have execution counts, with saved result tables and no error outputs. The [task guide](WEEK_2_TASK_GUIDE.md) gives the definitions and deliverables. The comparison uses the pinned Week 1 dataset revision, train for fitting, and validation for comparison; test rows remain untouched.
 
 | Day | Task | Main work | Checkpoint |
 | --- | --- | --- | --- |

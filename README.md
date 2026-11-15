@@ -2,7 +2,7 @@
 
 This research project studies **when to use correlated matching instead of PyMatching** on real hardware-derived surface-code syndrome data. A router sees allowed syndrome and experiment features, chooses one of two existing decoder predictions for each shot, and aims for **low logical error rate (LER) with less unnecessary correlated-matching use**. The router is a selector, not a quantum error-correction decoder.
 
-Logistic Regression, Random Forest, XGBoost, and a variational quantum classifier (VQC) are candidate routers for the **same routing objective**. This is not primarily an ML-versus-QML benchmark. The main system figure will be **LER versus correlated-matching usage** as the routing threshold changes. Saved results cover decoder feasibility and feature checks. Classical routers have passed offline tests on synthetic data; no router has been trained or evaluated on the published dataset yet.
+Logistic Regression, Random Forest, XGBoost, and a variational quantum classifier (VQC) are candidate routers for the **same routing objective**. This is not primarily an ML-versus-QML benchmark. The main system figure will be **LER versus correlated-matching usage** as the routing threshold changes. Saved results now cover decoder feasibility, feature checks, and a classical-router comparison on published train and validation samples. A threshold sweep and final test evaluation remain future work.
 
 The [Hugging Face dataset](https://huggingface.co/datasets/Bauxitiego/surface-code-syndromes) reformats [Google Quantum AI's original experimental data](https://zenodo.org/records/6804040). It includes train, validation, and test splits and stored per-shot decoder predictions. The full dataset is not kept in this repository.
 
@@ -20,7 +20,7 @@ Final decoder prediction
 System evaluation
 ```
 
-## Day 1 and evaluation logic
+## Decoder outcomes and evaluation logic
 
 Start by checking the dataset schema and split definitions on a small development sample. For each shot, compare each decoder prediction with the true logical label. The four outcome groups are:
 
@@ -35,13 +35,13 @@ The rescue opportunity is `PM wrong AND CM correct`. The **oracle LER** is the f
 
 ## Notebooks
 
-The first notebook, `00_dataset_and_feasibility.ipynb`, is complete. Its saved Colab run covers the pinned 50,000-row train sample, schema checks, four decoder outcomes, five rates, and the rescue-only routing target. All 16 code cells ran in order with no error outputs. The [data dictionary](docs/DATA_DICTIONARY.md) records the schema checks, and the [combined Week 1 findings](results/feasibility/week1_findings.md) record settings, results, and limitations. Notebook 01 is complete; notebook 02 is a Week 2 work outline. Later notebooks remain planned. Each notebook should call reusable code from the `router` package inside `src/` (for example, `from router.decoders import summarize_outcomes`):
+The first notebook, `00_dataset_and_feasibility.ipynb`, is complete. Its saved Colab run covers the pinned 50,000-row train sample, schema checks, four decoder outcomes, five rates, and the rescue-only routing target. All 16 code cells ran in order with no error outputs. The [data dictionary](docs/DATA_DICTIONARY.md) records the schema checks, and the [combined Week 1 findings](results/feasibility/week1_findings.md) record settings, results, and limitations. Notebooks 01 and 02 also have saved development-sample outputs. Notebook 02 has execution counts for all nine code cells, saved results, and no error outputs. Later notebooks remain planned. The completed notebooks call reusable code from the `router` package inside `src/` (for example, `from router.decoders import summarize_outcomes`):
 
 | Notebook | Responsibility |
 | --- | --- |
 | `00_dataset_and_feasibility.ipynb` | Week 1, complete: inspect the train sample and schema; calculate decoder outcomes, rates, and the rescue-only routing target. |
 | [`01_feature_engineering.ipynb`](notebooks/01_feature_engineering.ipynb) (complete) | Saved train and validation feature checks for detection-event count and density, round activity, active rounds, maximum round activity, distance, rounds, and basis. Padded positions are masked with `round_widths`. |
-| [`02_classical_routers.ipynb`](notebooks/02_classical_routers.ipynb) (scaffold) | Try a Dummy baseline, Logistic Regression, Random Forest, and XGBoost on the same routing target. |
+| [`02_classical_routers.ipynb`](notebooks/02_classical_routers.ipynb) (saved validation run) | Compare Dummy, Logistic Regression, Random Forest, and XGBoost on one rescue target and the same validation rows; report provisional 0.5-threshold system results. |
 | `03_qml_router.ipynb` | Explore a VQC/QML routing candidate using compact features for the same routing objective. |
 | `04_routing_tradeoff.ipynb` | Sweep thresholds on validation data and plot LER against correlated-matching usage. |
 | `05_final_evaluation.ipynb` | Evaluate the chosen router once on untouched test samples against always-PyMatching, always-correlated-matching, and oracle routing. |
@@ -54,9 +54,9 @@ cd selective-decoder-routing
 pip install -e .
 ```
 
-The current Week 1 notebook instead downloads the required `router` files and installs its small runtime dependency set. Both setups call the same package functions.
+The completed Colab notebooks download the required `router` files and install their runtime dependencies. Both setup styles call the same package functions.
 
-Week 2 covers feature engineering and the first classical routers in notebooks 01 and 02. Tasks 1–3 are complete: the feature extractor and tests are merged; notebook 01's saved Colab run and [feature note](results/tables/week2_feature_checks.md) checked 50,000 train and 10,000 validation feature rows; and the four classical router pipelines, configuration, and offline tests are merged. Task 3 tests passed on synthetic data using the actual 33-column feature schema, with train-only preprocessing, a strict feature allowlist, and target-index checks. Task 4 remains: notebook 02 must train and compare the routers on the published train and validation samples. The [Week 2 task guide](docs/WEEK_2_TASK_GUIDE.md) divides that work into four tasks, and the [Week 2 schedule](docs/WEEK_2_SCHEDULE.md) gives seven-day checkpoints.
+Week 2 is complete: the feature extractor and tests are merged; notebook 01's saved Colab run and [feature note](results/tables/week2_feature_checks.md) checked 50,000 train and 10,000 validation feature rows; and notebook 02 trained all four classical routers on the published train sample and compared them on the published validation sample. Its [classical-router results](results/model_scores/week2_classical.md) report rescue-target metrics and final decoder LER, correlated-matching usage, rescues captured, and harmful switches. Threshold selection and test evaluation are later tasks. The [Week 2 task guide](docs/WEEK_2_TASK_GUIDE.md) defines the four tasks, and the [Week 2 schedule](docs/WEEK_2_SCHEDULE.md) gives seven-day checkpoints.
 
 Install optional QML dependencies only when working on the VQC notebook: `pip install -e '.[qml]'`. Keep notebook code focused on exploration and presentation; add reusable logic to the `router` package inside `src/`.
 
@@ -76,7 +76,7 @@ selective-decoder-routing/
 ├── notebooks/
 │   ├── 00_dataset_and_feasibility.ipynb  (complete)
 │   ├── 01_feature_engineering.ipynb      (complete)
-│   ├── 02_classical_routers.ipynb        (scaffold)
+│   ├── 02_classical_routers.ipynb        (saved validation run)
 │   ├── 03_qml_router.ipynb               (planned)
 │   ├── 04_routing_tradeoff.ipynb         (planned)
 │   └── 05_final_evaluation.ipynb         (planned)
@@ -88,7 +88,7 @@ selective-decoder-routing/
 │       ├── labels.py          # positive routing target
 │       ├── features.py        # Week 2 feature extraction
 │       ├── routing.py         # threshold and decoder selection
-│       ├── evaluate.py        # Week 2 validation-metric scaffold
+│       ├── evaluate.py        # rescue-target and system validation metrics
 │       ├── plots.py           # future shared plots
 │       └── models/
 │           ├── __init__.py
