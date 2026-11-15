@@ -1,6 +1,6 @@
 # Week 2 task guide: features and classical routers
 
-Week 2 builds on the [completed Week 1 analysis](../results/feasibility/week1_findings.md). The goal is to turn each shot's syndrome into a small, safe feature row and compare simple classical models that predict whether correlated matching would rescue PyMatching. [Notebook 01](../notebooks/01_feature_engineering.ipynb) has saved train/validation feature checks. The classical-model code and offline tests are complete; [notebook 02](../notebooks/02_classical_routers.ipynb) remains a scaffold for the published-sample comparison. See the [seven-day schedule](WEEK_2_SCHEDULE.md).
+Week 2 builds on the [completed Week 1 analysis](../results/feasibility/week1_findings.md). The goal is to turn each shot's syndrome into a small, safe feature row and compare simple classical models that predict whether correlated matching would rescue PyMatching. [Notebook 01](../notebooks/01_feature_engineering.ipynb) has saved train/validation feature checks, and [notebook 02](../notebooks/02_classical_routers.ipynb) has saved published-sample validation results. All nine notebook 02 code cells have execution counts; the result cells have saved outputs and no errors. See the [seven-day schedule](WEEK_2_SCHEDULE.md).
 
 ## The two things a model needs
 
@@ -18,7 +18,7 @@ Use the Week 1 dataset revision `9c51b27ffc51ed7ff3ef3a72167ebf4862d1f2f3` as th
 | 3. Build classical routers | `src/router/models/classical.py`, `configs/models.yaml`, `tests/test_classical.py` | Dummy, Logistic Regression, Random Forest, and XGBoost trained on the same target. |
 | 4. Compare routers in notebook 02 | `notebooks/02_classical_routers.ipynb`, `src/router/evaluate.py`, `results/model_scores/week2_classical.md` | Saved validation comparison, system checks, and a compact findings note. |
 
-**Progress — 14 November 2026:** Tasks 1–3 are complete. Notebook 01's saved Colab run checked 50,000 train and 10,000 validation rows with no failed feature assertions; aggregate findings are in [the feature note](../results/tables/week2_feature_checks.md). Task 3's four pipelines and offline tests are merged. Task 4, the notebook 02 run and published-sample validation comparison, remains pending.
+**Progress:** All four Week 2 tasks are complete. Notebook 01's saved Colab run checked 50,000 train and 10,000 validation feature rows; aggregate findings are in [the feature note](../results/tables/week2_feature_checks.md). Task 3's four pipelines and offline tests are merged. Task 4 trained all four models on the published train sample and compared them on the published validation sample. The [classical-router note](../results/model_scores/week2_classical.md) records the settings, results, checks, and limits.
 
 ## Task 1 — Build safe features
 
@@ -77,15 +77,18 @@ The 0.5 result is a diagnostic, not the final operating threshold. The full thre
 
 **Deliver:** a top-to-bottom Colab run with readable model and system tables, plus `results/model_scores/week2_classical.md` containing settings, validation results, and limitations. Save aggregate results only; keep model files and shot-level data out of Git.
 
+**Recorded result:** The saved notebook has execution counts for all nine code cells, saved result tables, and no error outputs. It used 50,000 train and 10,000 validation rows at the pinned dataset revision; validation rescue prevalence was 967/10,000. At the provisional 0.5 threshold, Logistic Regression had the highest AP (0.187496) and lowest LER (0.2693) among the trained routers, with 44.10% correlated-matching usage. Always correlated matching had LER 0.2622 at 100% usage, and the two-decoder oracle had LER 0.1849. See the [full results and limitations](../results/model_scores/week2_classical.md).
+
 ## Complete by the end of Day 7
 
 - [x] Feature code masks padding, returns stable named columns, and passes hand-checked tests.
 - [x] Notebook 01 runs on pinned train and validation samples and saves feature checks.
 - [x] All four classical candidates fit and produce aligned scores on the same synthetic train/validation example with the Task 1 feature schema.
-- [ ] All four classical candidates train on the published train sample and produce aligned scores on the published validation sample.
-- [ ] Notebook 02 reports target-class and system metrics on the same validation rows.
-- [ ] Both compact findings notes record revision, sample settings, feature definitions, model settings, and limitations.
+- [x] All four classical candidates train on the published train sample and produce aligned scores on the published validation sample.
+- [x] Notebook 02 reports target-class and system metrics on the same validation rows.
+- [x] The feature and classical findings notes record their applicable revision, sample settings, feature definitions, model settings, and limitations.
 - [x] The feature allowlist and model preprocessing exclude target, decoder, and experiment fields; mutation and validation-only-value tests prove the boundary offline.
-- [ ] No test rows guide development; no true label, stored decoder prediction, correctness flag, routing target, or experiment identifier enters `X`.
+- [x] No test rows guide development; no true label, stored decoder prediction, correctness flag, routing target, or experiment identifier enters `X`.
+- [x] Run notebook 02 in Colab with saved results and no error outputs.
 
 For the full split and leakage rules, use the [experiment protocol](EXPERIMENT_PROTOCOL.md) and [data dictionary](DATA_DICTIONARY.md).
