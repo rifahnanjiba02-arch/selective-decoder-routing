@@ -15,7 +15,7 @@ The [executed Colab notebook](../../notebooks/00_dataset_and_feasibility.ipynb) 
 | Sampling seed | 42 |
 | Published split seed | 20260806 |
 
-The notebook used a temporary config with the dataset revision pinned; `configs/data.yaml` retains `dataset_revision: null`. Repeating the selection matched every field of all 50,000 sampled rows in the same order. The repository's 15 offline unit tests and the notebook's test cell passed.
+The Week 1 notebook used a temporary config with the dataset revision pinned; `configs/data.yaml` was pinned later for Week 3. Repeating the selection matched every field of all 50,000 sampled rows in the same order. The repository's 15 offline unit tests and the notebook's test cell passed.
 
 The dataset card lists 650,000 validation and 1,300,000 test rows; these are published split sizes, not rows selected for this run.
 

@@ -11,7 +11,7 @@ Each dataset row is one surface-code shot with a true logical `label` and two st
 3. How often could selecting CM rescue PM, and how often would switching hurt?
 4. What is the lowest logical error rate possible when selecting between these two stored predictions?
 
-This is a **feasibility analysis**. It does not train a routing model or measure decoder runtime savings.
+This is a **feasibility analysis**. It does not train a routing model.
 
 ## Completion snapshot — 5 November 2026
 
@@ -21,7 +21,7 @@ All four Week 1 tasks are complete. Tasks 1–3 are merged into `main`; the [exe
 | --- | --- |
 | Load a named split | `load_surface_code_dataset()` loaded `train`: 4,550,000 rows and 12 columns. |
 | Reproducible sample | `sample_split()` selected 50,000 train rows with seed 42; a second selection matched every field of every row in order. |
-| Sample settings | Dataset revision `9c51b27ffc51ed7ff3ef3a72167ebf4862d1f2f3`, train sample size 50,000, and seed 42 are saved in the notebook and combined note. The notebook used a temporary pinned config; `configs/data.yaml` still leaves `dataset_revision: null`. |
+| Sample settings | Dataset revision `9c51b27ffc51ed7ff3ef3a72167ebf4862d1f2f3`, train sample size 50,000, and seed 42 are saved in the notebook and combined note. The Week 1 notebook used a temporary pinned config; `configs/data.yaml` was pinned later for Week 3. |
 | Dataset inspection | The [data dictionary](DATA_DICTIONARY.md) records all 12 field types and missing counts, relevant value sets, and syndrome/`round_widths` shape and padding checks. All required shape checks had zero failing sampled rows. |
 | Decoder outcomes | `outcome_masks()` and `summarize_outcomes()` produced four counts summing to 50,000 and five rates. The saved notebook agrees with the [Task 2 findings](../results/feasibility/task2_outcomes.md). |
 | Routing target | `route_to_correlated()` returns the rescue mask. Hand-checked tests cover all four outcomes, both logical-label values, disagreement, mask coverage, and unequal input lengths. All 15 repository tests pass; the notebook shows 4,625 positive targets, all rescue rows. |

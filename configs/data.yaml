@@ -1,11 +1,11 @@
 dataset_name: Bauxitiego/surface-code-syndromes
-dataset_revision: null  # Pin a dataset commit before recording reproducible results.
+dataset_revision: 9c51b27ffc51ed7ff3ef3a72167ebf4862d1f2f3
 source_split_seed: 20260806  # Published dataset split seed; do not create new splits.
 sampling_seed: 42  # Pass this explicitly to sample_split().
 development:
-  train_size: 50000       # Week 1 development sample.
+  train_size: 50000       # Shared train sample for Weeks 1–3.
   validation_size: 10000
-  test_size: null         # Choose only after the final-evaluation policy is fixed.
+  test_size: 100000       # Frozen Week 3 final sample; select once after model/threshold freeze.
 paths:
   cache_dir: .cache/huggingface
   feature_dir: artifacts/features

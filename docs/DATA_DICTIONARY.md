@@ -17,11 +17,11 @@ Source: [Bauxitiego/surface-code-syndromes dataset card](https://huggingface.co/
 | `experiment` | Source experiment directory name. | Potential grouping metadata; use as an input needs separate review. |
 | `tensor_network` | Stored tensor-network prediction, null where not run. | Outside current two-decoder routing scope. |
 
-**Unresolved interpretation:** TODO: verify from dataset documentation and original release exactly what costs or runtimes distinguish the two decoders in this dataset. Until measured, "usage" is a selection fraction, not a measured time or energy saving. TODO: verify whether experiment identifier or other metadata would create an unfair shortcut for the intended generalization claim.
+**Runtime interpretation:** The [decoder runtime notebook](../notebooks/decoder_runtime_motivation.ipynb) measured standard and correlation-enabled PyMatching on six selected archive configurations. Its reconstructed decoder predictions do not consistently match the stored predictions used by this project, so correlated-matching usage remains a selection fraction, not a measured router time or energy saving. The Week 3 protocol excludes `experiment` as a model feature and limits the claim to new shots within the published experiments.
 
 ## Week 1 Task 1 findings (24 October 2026)
 
-The [feasibility notebook](../notebooks/00_dataset_and_feasibility.ipynb) has saved Colab outputs for these checks on dataset revision `9c51b27ffc51ed7ff3ef3a72167ebf4862d1f2f3`, with **50,000 train rows** and sampling seed `42`. Repeating the selection matched **all fields of all 50,000 sampled rows in the same order**, checked in batches. The repository's `configs/data.yaml` still has `dataset_revision: null`; the notebook used a temporary pinned config.
+The [feasibility notebook](../notebooks/00_dataset_and_feasibility.ipynb) has saved Colab outputs for these checks on dataset revision `9c51b27ffc51ed7ff3ef3a72167ebf4862d1f2f3`, with **50,000 train rows** and sampling seed `42`. Repeating the selection matched **all fields of all 50,000 sampled rows in the same order**, checked in batches. That Week 1 run used a temporary pinned config; the repository config was pinned later for Week 3.
 
 The loaded train split contained **4,550,000 rows**. The [dataset card](https://huggingface.co/datasets/Bauxitiego/surface-code-syndromes) lists **650,000 validation** and **1,300,000 test** rows. Only train rows were selected for analysis. The Hugging Face loader also downloaded/prepared validation and test files internally, as the notebook's saved output shows.
 
